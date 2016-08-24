@@ -1,7 +1,8 @@
 all: group compiler
 
 group:
-	echo "Put your group member names here"
+	echo "Kyle Rakos  krakos  00262-79187"
+	echo "Brian Rieder username id"
 
 compiler: helloworld
 
