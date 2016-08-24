@@ -1,8 +1,8 @@
 all: group compiler
 
 group:
-	echo "Kyle Rakos  krakos  00262-79187"
-	echo "Brian Rieder username id"
+	echo "Kyle Rakos  krakos"
+	echo "Brian Rieder brieder"
 
 compiler: helloworld
 
