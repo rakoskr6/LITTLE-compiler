@@ -1,0 +1,12 @@
+all: group compiler
+
+group:
+	echo "Put your group member names here"
+
+compiler: helloworld
+
+helloworld: helloworld.c
+	$(CC) -o $@ $<
+
+clean:
+	rm helloworld
