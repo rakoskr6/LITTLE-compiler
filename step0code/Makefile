@@ -1,7 +1,7 @@
 all: group compiler
 
 group:
-	echo "Kyle Rakos  krakos"
+	echo "Kyle Rakos krakos"
 	echo "Brian Rieder brieder"
 
 compiler: helloworld
