@@ -14,3 +14,7 @@ hs_err_pid*
 # IDEA ignore
 .idea/
 *.iml
+
+# Makefile ignores
+classes/
+build/
