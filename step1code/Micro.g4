@@ -9,9 +9,25 @@ grammar Micro;
 KEYWORD
     : ('PROGRAM' | 'BEGIN' | 'END' | 'FUNCTION' | 'READ' | 'WRITE' | 'IF' | 'ELSIF' | 'ENDIF' | 'DO' | 'WHILE'
     | 'CONTINUE' | 'BREAK' | 'RETURN' | 'INT' | 'VOID' | 'STRING' | 'FLOAT' | 'TRUE' | 'FALSE') ;
-    
+
 OPERATOR
-    : (':=' | '+' | '-' | '*' | '/' | '=' | '!=' | '<' | '>' | '(' | ')' | ';' | ',' | '<=' | '>=') ;
+    // : (':=' | '+' | '-' | '*' | '/' | '=' | '!=' | '<' | '>' | '(' | ')' | ';' | ',' | '<=' | '>=') ;
+    : (ASSIGN_OP | ADD_OP | SUBTRACT_OP | MULTIPLY_OP | DIVIDE_OP | EQUAL_OP | NOTEQUAL_OP | LT_OP | GT_OP | LPAREN | RPAREN | SEMICOL | COMMA | LTE_OP | GTE_OP) ;
+ASSIGN_OP: ':=' ;
+ADD_OP: '+' ;
+SUBTRACT_OP: '-' ;
+MULTIPLY_OP: '*';
+DIVIDE_OP: '/';
+EQUAL_OP: '=';
+NOTEQUAL_OP: '!=';
+LT_OP: '<';
+GT_OP: '>';
+LPAREN: '(';
+RPAREN: ')';
+SEMICOL: ';';
+COMMA: ',';
+LTE_OP: '<=';
+GTE_OP: '>=';
 
 // Program
 program
