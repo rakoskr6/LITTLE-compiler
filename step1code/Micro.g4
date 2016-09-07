@@ -156,6 +156,11 @@ STRINGLITERAL // begins and ends with ", contains 0-80 non-" characters -- SUPER
 COMMENT
     : '--'.*?'\n' ;
 
+WS
+    : [ \t\r\n]+
+    -> skip
+;
+
 // Operators and Keywords
 OPERATOR
     : (':=' | '+' | '-' | '*' | '/' | '=' | '!=' | '<' | '>' | '(' | ')' | ';' | ',' | '<=' | '>=') ;
