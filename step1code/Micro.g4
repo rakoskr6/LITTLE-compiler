@@ -5,6 +5,11 @@
 // Description: g4 file to generate grammar for LITTLE within Antlr
 
 grammar Micro;
+
+KEYWORD
+    : ('PROGRAM' | 'BEGIN' | 'END' | 'FUNCTION' | 'READ' | 'WRITE' | 'IF' | 'ELSIF' | 'ENDIF' | 'DO' | 'WHILE'
+    | 'CONTINUE' | 'BREAK' | 'RETURN' | 'INT' | 'VOID' | 'STRING' | 'FLOAT' | 'TRUE' | 'FALSE') ;
+
 // Program
 program
     : 'PROGRAM' id 'BEGIN' pgm_body 'END';
@@ -158,21 +163,8 @@ COMMENT
 
 WS
     : [ \t\r\n]+
-    -> skip
-;
+    -> skip ;
 
 // Operators and Keywords
 OPERATOR
     : (':=' | '+' | '-' | '*' | '/' | '=' | '!=' | '<' | '>' | '(' | ')' | ';' | ',' | '<=' | '>=') ;
-KEYWORD
-    : ('PROGRAM' | 'BEGIN' | 'END' | 'FUNCTION' | 'READ' | 'WRITE' | 'IF' | 'ELSIF' | 'ENDIF' | 'DO' | 'WHILE'
-    | 'CONTINUE' | 'BREAK' | 'RETURN' | 'INT' | 'VOID' | 'STRING' | 'FLOAT' | 'TRUE' | 'FALSE') ;
-
-/*
-Keywords
-
-PROGRAM,BEGIN,END,FUNCTION,READ,WRITE,
-IF,ELSIF,ENDIF,DO,WHILE,CONTINUE,BREAK,
-RETURN,INT,VOID,STRING,FLOAT,
-TRUE,FALSE */
-
