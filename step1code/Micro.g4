@@ -6,10 +6,33 @@
 
 grammar Micro;
 
+// Keywords
 KEYWORD
-    : ('PROGRAM' | 'BEGIN' | 'END' | 'FUNCTION' | 'READ' | 'WRITE' | 'IF' | 'ELSIF' | 'ENDIF' | 'DO' | 'WHILE'
-    | 'CONTINUE' | 'BREAK' | 'RETURN' | 'INT' | 'VOID' | 'STRING' | 'FLOAT' | 'TRUE' | 'FALSE') ;
+    : (PROGRAM_KW | BEGIN_KW | END_KW | FUNCTION_KW | READ_KW | WRITE_KW | IF_KW | ELSIF_KW | ENDIF_KW | DO_KW | WHILE_KW
+   | CONTINUE_KW | BREAK_KW | RETURN_KW | INT_KW | VOID_KW | STRING_KW | FLOAT_KW | TRUE_KW | FALSE_KW) ;
 
+PROGRAM_KW: 'PROGRAM';
+BEGIN_KW: 'BEGIN';
+END_KW: 'END';
+FUNCTION_KW: 'FUNCTION';
+READ_KW: 'READ';
+WRITE_KW: 'WRITE';
+IF_KW: 'IF';
+ELSIF_KW: 'ELSIF';
+ENDIF_KW: 'ENDIF';
+DO_KW: 'DO';
+WHILE_KW: 'WHILE';
+CONTINUE_KW: 'CONTINUE';
+BREAK_KW: 'BREAK';
+RETURN_KW: 'RETURN';
+INT_KW: 'INT';
+VOID_KW: 'VOID';
+STRING_KW: 'STRING';
+FLOAT_KW: 'FLOAT';
+TRUE_KW: 'TRUE';
+FALSE_KW: 'FALSE';
+
+// Operators
 OPERATOR
     // : (':=' | '+' | '-' | '*' | '/' | '=' | '!=' | '<' | '>' | '(' | ')' | ';' | ',' | '<=' | '>=') ;
     : (ASSIGN_OP | ADD_OP | SUBTRACT_OP | MULTIPLY_OP | DIVIDE_OP | EQUAL_OP | NOTEQUAL_OP | LT_OP | GT_OP | LPAREN | RPAREN | SEMICOL | COMMA | LTE_OP | GTE_OP) ;
