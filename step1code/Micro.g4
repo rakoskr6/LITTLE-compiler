@@ -10,7 +10,6 @@ grammar Micro;
 KEYWORD
     : (PROGRAM_KW | BEGIN_KW | END_KW | FUNCTION_KW | READ_KW | WRITE_KW | IF_KW | ELSIF_KW | ENDIF_KW | DO_KW | WHILE_KW
    | CONTINUE_KW | BREAK_KW | RETURN_KW | INT_KW | VOID_KW | STRING_KW | FLOAT_KW | TRUE_KW | FALSE_KW) ;
-
 PROGRAM_KW: 'PROGRAM';
 BEGIN_KW: 'BEGIN';
 END_KW: 'END';
@@ -34,7 +33,6 @@ FALSE_KW: 'FALSE';
 
 // Operators
 OPERATOR
-    // : (':=' | '+' | '-' | '*' | '/' | '=' | '!=' | '<' | '>' | '(' | ')' | ';' | ',' | '<=' | '>=') ;
     : (ASSIGN_OP | ADD_OP | SUBTRACT_OP | MULTIPLY_OP | DIVIDE_OP | EQUAL_OP | NOTEQUAL_OP | LT_OP | GT_OP | LPAREN | RPAREN | SEMICOL | COMMA | LTE_OP | GTE_OP) ;
 ASSIGN_OP: ':=' ;
 ADD_OP: '+' ;
@@ -207,5 +205,3 @@ COMMENT :
 WS
     : [ \t\r\n]+
     -> skip ;
-
-// Operators and Keywords
