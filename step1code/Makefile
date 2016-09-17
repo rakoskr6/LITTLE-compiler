@@ -4,7 +4,7 @@ ANTLR_SCRIPT := Micro.g4
 all: group compiler
 
 group:
-	@echo "Kyle Rakos Brian Rieder"
+	@echo "Kyle Rakos krakos, Brian Rieder brieder"
 compiler:
 	rm -rf build
 	mkdir build
