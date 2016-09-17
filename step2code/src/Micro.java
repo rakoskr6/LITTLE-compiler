@@ -15,7 +15,7 @@ public class Micro {
 		
 
 		MicroParser parser = new MicroParser(tokenStream);
-		parser.eval();
+		parser.program();
 
 
 		/*tokenStream.fill();
