@@ -31,8 +31,11 @@ for testfile in `ls testcases/input/ | sort -V` ; do
     output=$(echo $output | tr -d '\r')
     if [ "$output" = "$expected" ] ; then
       printf "\033[0;32mPASSED\n\033[0m"
+      (( cases_passed += 1 ))
+      (( cases_total += 1 ))
     else
       printf "\033[0;31mFAILED\n\033[0m"
+      (( cases_total += 1 ))
     fi
   else
     echo "Error: Unsupported OSTYPE $OSTYPE"
