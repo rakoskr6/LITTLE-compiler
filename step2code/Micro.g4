@@ -1,5 +1,5 @@
 // File name:   Micro.g4
-// Updated:     6 September 2016
+// Updated:     17 September 2016
 // Authors:     Brian Rieder
 //              Kyle Rakos
 // Description: g4 file to generate grammar for LITTLE within Antlr
@@ -51,6 +51,8 @@ LTE_OP: '<=';
 GTE_OP: '>=';
 
 // Program
+eval
+    : program;
 program
     : 'PROGRAM' id 'BEGIN' pgm_body 'END';
 id
