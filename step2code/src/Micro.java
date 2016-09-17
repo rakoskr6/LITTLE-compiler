@@ -12,7 +12,13 @@ public class Micro {
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		//System.out.println(tokenStream.getText());
 		//tokenStream.getText();
-		tokenStream.fill();
+		
+
+		MicroParser parser = new MicroParser(tokenStream);
+		parser.eval();
+
+
+		/*tokenStream.fill();
 		List<Token> tokenList = tokenStream.getTokens();
 
 		String[] tokenType = lexer.getTokenNames();
@@ -24,6 +30,7 @@ public class Micro {
 			}
 
 		}
+		*/
 
 	}
 }
