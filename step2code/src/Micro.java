@@ -2,6 +2,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.*;
 import java.lang.String;
+import java.io.*;
 
 
 public class Micro {
@@ -14,9 +15,19 @@ public class Micro {
 		//tokenStream.getText();
 		
 
-		MicroParser parser = new MicroParser(tokenStream);
-		System.out.println(parser.eval().value);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		System.setErr(new PrintStream(baos));
+		String str = baos.toString();
 
+		
+
+		MicroParser parser = new MicroParser(tokenStream);
+		
+		parser.eval();
+		if (str != null && !str.isEmpty())
+		{
+			System.out.println("Fail");
+		}
 
 		/*tokenStream.fill();
 		List<Token> tokenList = tokenStream.getTokens();
