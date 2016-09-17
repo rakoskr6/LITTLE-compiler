@@ -5,11 +5,10 @@
 // Description: g4 file to generate grammar for LITTLE within Antlr
 
 grammar Micro;
-
+eval returns [double value]
+    : program;
 // Keywords
-KEYWORD
-    : (PROGRAM_KW | BEGIN_KW | END_KW | FUNCTION_KW | READ_KW | WRITE_KW | IF_KW | ELSIF_KW | ENDIF_KW | DO_KW | WHILE_KW
-   | CONTINUE_KW | BREAK_KW | RETURN_KW | INT_KW | VOID_KW | STRING_KW | FLOAT_KW | TRUE_KW | FALSE_KW) ;
+
 PROGRAM_KW: 'PROGRAM';
 BEGIN_KW: 'BEGIN';
 END_KW: 'END';
@@ -51,8 +50,7 @@ LTE_OP: '<=';
 GTE_OP: '>=';
 
 // Program
-eval
-    : program;
+
 program
     : 'PROGRAM' id 'BEGIN' pgm_body 'END';
 id
