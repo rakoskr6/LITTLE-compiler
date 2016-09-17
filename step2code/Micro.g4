@@ -163,7 +163,7 @@ TRUE_KW: 'TRUE';
 FALSE_KW: 'FALSE';*/
 
 // Operators
-OPERATOR
+/*OPERATOR
     : (ASSIGN_OP | ADD_OP | SUBTRACT_OP | MULTIPLY_OP | DIVIDE_OP | EQUAL_OP | NOTEQUAL_OP | LT_OP | GT_OP | LPAREN | RPAREN | SEMICOL | COMMA | LTE_OP | GTE_OP) ;
 ASSIGN_OP: ':=' ;
 ADD_OP: '+' ;
@@ -179,9 +179,16 @@ RPAREN: ')';
 SEMICOL: ';';
 COMMA: ',';
 LTE_OP: '<=';
-GTE_OP: '>=';
+GTE_OP: '>=';*/
 
 // Identifiers and Literals
+COMMENT :
+    '--'.*?'\n'
+    -> skip ;
+
+WS
+    : [ \t\r\n]+
+    -> skip ;
 IDENTIFIER // will begin with a letter and be followed by up to 30 letters/numbers
     // : [A-z][A-z0-9]{0,30} ;
     : [A-z][A-z0-9]*
@@ -200,10 +207,3 @@ STRINGLITERAL // begins and ends with ", contains 0-80 non-" characters
         if (getText().length() > 82)
             throw new RuntimeException("Error: Exceeded 82 characters in string");
     };
-COMMENT :
-    '--'.*?'\n'
-    -> skip ;
-
-WS
-    : [ \t\r\n]+
-    -> skip ;
