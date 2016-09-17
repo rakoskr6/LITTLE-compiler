@@ -1,4 +1,6 @@
 #!/bin/bash
+# Author: Brian Rieder
+# Date:   17 September 2016
 
 make
 for testfile in `ls -d testcases/input/* | sort -V` ; do
