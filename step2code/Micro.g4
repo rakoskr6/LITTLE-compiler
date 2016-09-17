@@ -180,24 +180,24 @@ do_while_stmt
     : 'DO' decl stmt_list 'WHILE' '(' cond ')' ';' ;
 
 // Identifiers and Literals
-IDENTIFIER // will begin with a letter and be followed by up to 30 letters/numbers -- THIS IS SUPER HACKY RIGHT NOW
+IDENTIFIER // will begin with a letter and be followed by up to 30 letters/numbers
     // : [A-z][A-z0-9]{0,30} ;
-    : [A-z]
-    [A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?
-    [A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?
-    [A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]?[A-z0-9]? ;
+    : [A-z][A-z0-9]*
+    {
+        if (getText().length() > 31)
+            throw new RuntimeException("Error: Exceeded 31 characters in identifier");
+    };
 INTLITERAL
     : [0-9]+ ;
 FLOATLITERAL
     : [0-9]*?'.'[0-9]+ ;
-STRINGLITERAL // begins and ends with ", contains 0-80 non-" characters -- SUPER HACKY AGAIN
+STRINGLITERAL // begins and ends with ", contains 0-80 non-" characters
     // : '"'~["]{0,80}'"' ;
-    : '"'
-    ~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?
-    ~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?
-    ~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?
-    ~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?~["]?
-    '"' ;
+    : '"'~["]*'"' 
+    {
+        if (getText().length() > 82)
+            throw new RuntimeException("Error: Exceeded 82 characters in string");
+    };
 COMMENT :
     '--'.*?'\n'
     -> skip ;
