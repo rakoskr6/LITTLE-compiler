@@ -13,6 +13,7 @@ public class Micro {
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		MicroParser parser = new MicroParser(tokenStream);
 		try {
+			parser.removeErrorListeners();
 			parser.setErrorHandler(new BailErrorStrategy());
 			parser.eval();
 			System.out.println("Accepted");
