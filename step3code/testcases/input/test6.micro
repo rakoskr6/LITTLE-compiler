@@ -1,0 +1,24 @@
+PROGRAM test
+BEGIN
+	INT a,b,c,x,y,z,h,j,k;
+	FUNCTION VOID printout (INT a,INT b,INT c)
+	BEGIN
+		WRITE (a);
+		WRITE (b);
+		WRITE (c);
+	END
+  FUNCTION INT main()
+	BEGIN
+	IF (a = b)
+		h:=0;
+	ELSIF (TRUE)
+
+	     DO
+		     a := j;
+		     j := j + 1;		
+	     WHILE (j<=10);
+
+	ENDIF
+	RETURN a+b;
+	END
+END
