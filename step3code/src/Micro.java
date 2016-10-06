@@ -31,10 +31,25 @@ public class Micro {
 }
 
 class AntlrGlobalListener extends MicroBaseListener {
- 
+
+    List strList = new ArrayList<String>();
+
     @Override
-    public void enterProgram(MicroParser.ProgramContext ctx) {
-        System.out.println(ctx.getText());
+    public void enterPgm_body(MicroParser.Pgm_bodyContext ctx) {
+        System.out.println("Symbol table GLOBAL");
     }
  
+    @Override
+    public void enterString_decl(MicroParser.String_declContext ctx) {
+        // List<TerminalNode> tnodelist = getTokens()
+        System.out.println(ctx.getTokens(4)); // getTokens returns an array of all matches of ttype #
+        // System.out.println(ctx.getStart().getType());
+    }
+
+    @Override
+    public void enterDecl(MicroParser.DeclContext ctx) {
+        // System.out.print(ctx.getText());
+        // System.out.println(ctx.getText());
+    }
+
 }
