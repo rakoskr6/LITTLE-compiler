@@ -12,14 +12,16 @@ public class Micro {
 		MicroLexer lexer = new MicroLexer(fid);
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		MicroParser parser = new MicroParser(tokenStream);
-		try {
-			parser.removeErrorListeners();
-			parser.setErrorHandler(new BailErrorStrategy());
-			parser.eval();
-			System.out.println("Accepted");
-		}	
-		catch (Exception e) {
-			System.out.println("Not Accepted");
-		}
+		
+		
 	}
+}
+
+public class AntlrGlobalListener extends MicroBaseListener {
+ 
+    @Override
+    public void enterProgram(MicroContext ctx) {
+        System.out.println(ctx.getText());
+    }
+ 
 }
