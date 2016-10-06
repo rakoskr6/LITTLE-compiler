@@ -26,6 +26,10 @@ public class Micro {
         ParseTreeWalker walker = new ParseTreeWalker();
         AntlrGlobalListener listener = new AntlrGlobalListener();
         walker.walk(listener, programContext);
+
+        // TODO
+        // Properly get variables and names
+        // Determine scope
 	}
 
 }
