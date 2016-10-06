@@ -13,11 +13,11 @@ public class Micro {
 		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 		MicroParser parser = new MicroParser(tokenStream);
 		
-		
+
 	}
 }
 
-public class AntlrGlobalListener extends MicroBaseListener {
+private class AntlrGlobalListener extends MicroBaseListener {
  
     @Override
     public void enterProgram(MicroContext ctx) {
