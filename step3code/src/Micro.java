@@ -15,12 +15,13 @@ public class Micro {
 		
 
 	}
+
 }
 
-private class AntlrGlobalListener extends MicroBaseListener {
+class AntlrGlobalListener extends MicroBaseListener {
  
     @Override
-    public void enterProgram(MicroContext ctx) {
+    public void enterProgram(MicroParser.ProgramContext ctx) {
         System.out.println(ctx.getText());
     }
  
