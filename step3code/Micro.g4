@@ -7,13 +7,11 @@
 grammar Micro;
 
 // Program
-eval
-    : program;
 program
     : 'PROGRAM' id 'BEGIN' pgm_body 'END';
-id
+ifd
     : IDENTIFIER ;
-pgm_body
+pgm_body // GLOBAL
     : decl func_declarations ;
 decl
     : string_decl decl
@@ -54,13 +52,13 @@ param_decl_tail
 func_declarations
     : func_decl func_declarations
     | ;
-func_decl
+func_decl // Function scope
     : 'FUNCTION' any_type  id '(' param_decl_list ')' 'BEGIN' func_body 'END' ;
 func_body
     : decl stmt_list ;
 
 // Statement List
-stmt_list
+stmt_list // BLOCK
     : stmt stmt_list
     | ;
 stmt
@@ -120,7 +118,7 @@ mulop
     | '/' ;
 
 // Complex Statement and Condition
-if_stmt
+if_stmt // BLOCK
     : 'IF' '(' cond ')' decl stmt_list else_part 'ENDIF' ;
 else_part
     : 'ELSIF' '(' cond ')' decl stmt_list else_part | ;
@@ -134,7 +132,7 @@ compop
     | '<='
     | '>=' ;
 
-do_while_stmt
+do_while_stmt // BLOCK
     : 'DO' decl stmt_list 'WHILE' '(' cond ')' ';' ;
 
 // Keywords
