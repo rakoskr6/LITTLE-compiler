@@ -113,12 +113,13 @@ class AntlrGlobalListener extends MicroBaseListener {
 
 	@Override 
 	public void enterVar_decl(MicroParser.Var_declContext ctx) { 
-        SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), ctx.getChild(1).getText());
-        allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+		String varNames = ctx.getChild(1).getText();
+		varNames = varNames.replaceAll(";","");
 
-        // Will need to parse beginning of variable to determine if int or float. Then will split on commas to get all variable names
-        // (this gross technique may be needed in order to acutally get all variables for declarations like INT a,b,c)
-
+		for (String varName : varNames.split(",")) {
+			SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), varName);
+        	allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+		}     
     }
 
 	@Override 
@@ -155,14 +156,13 @@ class SymbolObject { // This class contains variable name, type, and (optionally
 	public String varValue;
 
 	public SymbolObject(String varType, String varName) {
-		this.varName = varName;
 		this.varType = varType;
-		//this.varValue = "";
+		this.varName = varName;
 	}
 
 	public SymbolObject(String varType, String varName, String varValue) {
-		this.varName = varName;
 		this.varType = varType;
+		this.varName = varName;
 		this.varValue = varValue;
 	}
 
