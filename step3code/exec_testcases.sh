@@ -25,11 +25,11 @@ for testfile in `ls testcases/input/ | sort -V` ; do
     fi
   elif [[ $OSTYPE == "linux-gnu" ]] ; then
     output=$(java -cp classes/:lib/antlr.jar Micro testcases/input/$testfile)
-    echo "Output:   $output"
+    
     expected=$(cat testcases/output/$allstrip.out)
-    echo "Expected: $expected"
-    output=$(echo $output | tr -d '\r')
-    if [ "$output" = "$expected" ] ; then
+    
+    diff -y <(echo $output) <(echo $expected)
+    if [ $? -eq 0 ] ; then
       printf "\033[0;32mPASSED\n\033[0m"
       (( cases_passed += 1 ))
       (( cases_total += 1 ))
