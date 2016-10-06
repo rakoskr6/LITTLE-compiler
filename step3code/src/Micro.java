@@ -61,14 +61,27 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     @Override
     public void exitPgm_body(MicroParser.Pgm_bodyContext ctx) {
-        
+
+        for (int i = 0; i < this.allSymbolTables.size(); i++) {
+        	Set<String> set = new HashSet<String>();
+
+    		for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
+    			if (set.contains(this.allSymbolTables.get(i).objectList.get(x).varName) == true) {
+    				System.out.println("DECLARATION ERROR " + this.allSymbolTables.get(i).objectList.get(x).varName);
+    				return;
+    			}
+    			set.add(this.allSymbolTables.get(i).objectList.get(x).varName);
+    		}
+		}
+
+        // Print output
     	for (int i = 0; i < this.allSymbolTables.size(); i++) {
     		System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
     		for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
     			this.allSymbolTables.get(i).objectList.get(x).print();
     		}
 
-    		if (i +1 < this.allSymbolTables.size()) {
+    		if (i +1 < this.allSymbolTables.size()) { // remove trailing extra newline
     			System.out.println();
     		}
     	}
