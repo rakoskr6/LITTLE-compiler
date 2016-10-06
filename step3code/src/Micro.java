@@ -35,44 +35,67 @@ public class Micro {
         AntlrGlobalListener listener = new AntlrGlobalListener();
         walker.walk(listener, programContext);
 
+        
+
 	}
 
 }
 
 class AntlrGlobalListener extends MicroBaseListener {
 	private int blockCounter;
+	public List<SymbolTable> allSymbolTables = new ArrayList<SymbolTable>();
 
     public AntlrGlobalListener() {
     	this.blockCounter = 1;
     }
 
 
-    /** Scope stuff **/
+    /****** Scope stuff 
+    /****** (creates new symbol tables and adds it to list of all symbol tables) ******/
+
     @Override
     public void enterPgm_body(MicroParser.Pgm_bodyContext ctx) {
-        System.out.println("GLOBAL");
+        SymbolTable global = new SymbolTable("Global");
+        this.allSymbolTables.add(global); 
+    }
 
+    @Override
+    public void exitPgm_body(MicroParser.Pgm_bodyContext ctx) {
+        
+    	for (int i = 0; i < this.allSymbolTables.size(); i++) {
+    		System.out.println("Scope " + this.allSymbolTables.get(i).scope);
+    		for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
+    			this.allSymbolTables.get(i).objectList.get(x).print();
+    		}
+    	}
     }
 
     @Override 
     public void enterFunc_decl(MicroParser.Func_declContext ctx) { 
     	// Create new symbol table with name ctx.getChild(2)
-    	System.out.println("\n" + ctx.getChild(2).getText());
+    	//System.out.println("\n" + ctx.getChild(2).getText());
+    	SymbolTable func = new SymbolTable(ctx.getChild(2).getText());
+        this.allSymbolTables.add(func); 
 
     }
 
     @Override 
     public void enterIf_stmt(MicroParser.If_stmtContext ctx) { 
     	// Create new symbol table with blockCounter
-    	System.out.println("\n" + blockCounter++);
+    	//System.out.println("\n" + blockCounter++);
+    	SymbolTable ifst = new SymbolTable(Integer.toString(blockCounter++));
+        this.allSymbolTables.add(ifst); 
 
     }
 
     @Override 
     public void enterElse_part(MicroParser.Else_partContext ctx) { 
     	// Create new symbol table with blockCounter
-    	if (!ctx.getText().isEmpty()) {
-	    	System.out.println("\n" + blockCounter++);
+    	if (!ctx.getText().isEmpty()) { // don't want to add else block if unused
+	    	//System.out.println("\n" + blockCounter++);
+	    	SymbolTable elst = new SymbolTable(Integer.toString(blockCounter++));
+        	this.allSymbolTables.add(elst); 
+	    	
     	}	
 
 
@@ -81,21 +104,29 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override 
     public void enterDo_while_stmt(MicroParser.Do_while_stmtContext ctx) { 
     	// Create new symbol table with blockCounter
-    	System.out.println("\n" + blockCounter++);
+    	//System.out.println("\n" + blockCounter++);
+    	SymbolTable dowhl = new SymbolTable(Integer.toString(blockCounter++));
+        this.allSymbolTables.add(dowhl);
     }
  
 
 
-    /** Variable declarations **/
+    /** Variable declarations 
+    /** (creates symbol objects for variables and adds them to current symbol table) **/
+
     @Override
     public void enterString_decl(MicroParser.String_declContext ctx) {
-        System.out.print(ctx.getChild(1).getText() + " ");
-        System.out.println(ctx.getChild(3).getText());
+        SymbolObject newSymbolObject = new SymbolObject("STRING", ctx.getChild(1).getText(), ctx.getChild(3).getText());
+        //System.out.println("Type is " + newSymbolObject.varType + " and name is " + newSymbolObject.varName + "and value is " + newSymbolObject.varValue);
+        allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
     }
 
 	@Override 
 	public void enterVar_decl(MicroParser.Var_declContext ctx) { 
-        System.out.println(ctx.getChild(0).getText() + " " + ctx.getChild(1).getText());
+        SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), ctx.getChild(1).getText());
+        //System.out.println("Type is " + newSymbolObject.varType + " and name is " + newSymbolObject.varName);
+        allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+
         // Will need to parse beginning of variable to determine if int or float. Then will split on commas to get all variable names
         // (this gross technique may be needed in order to acutally get all variables for declarations like INT a,b,c)
 
@@ -104,6 +135,8 @@ class AntlrGlobalListener extends MicroBaseListener {
 	@Override 
 	public void enterParam_decl(MicroParser.Param_declContext ctx) { 
         System.out.println(ctx.getChild(0).getText() + " " + ctx.getChild(1).getText());
+		// Need to determine decleration type and then creat newSymbolObject
+		// Then add to allSymbolsTables
 	}
 
 
@@ -112,10 +145,44 @@ class AntlrGlobalListener extends MicroBaseListener {
 
 }
 
-class SymbolTable {
-	public void SymbolTable() {
+class SymbolTable { // This symbol table contains a list of declarations
+    public String scope;
+    public List<SymbolObject> objectList;
 
-
+	public SymbolTable(String scope) {
+		this.scope = scope;
+		this.objectList = new ArrayList<SymbolObject>();
 	}
 
+	public void addObject(SymbolObject obj) {
+		this.objectList.add(obj);
+	}
+
+}
+
+class SymbolObject { // This class contains variable name, type, and (optionally) value
+	public String varName;
+	public String varType;
+	public String varValue;
+
+	public SymbolObject(String varType, String varName) {
+		this.varName = varName;
+		this.varType = varType;
+		this.varValue = "";
+	}
+
+	public SymbolObject(String varType, String varName, String varValue) {
+		this.varName = varName;
+		this.varType = varType;
+		this.varValue = varValue;
+	}
+
+	public void print() {
+		System.out.print(this.varName + " ");
+		System.out.print(this.varType + " ");
+		if (!this.varValue.isEmpty()) {
+			System.out.print(varValue);
+		}
+		System.out.println("");
+	}
 }
