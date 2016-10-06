@@ -67,7 +67,10 @@ class AntlrGlobalListener extends MicroBaseListener {
     		for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
     			this.allSymbolTables.get(i).objectList.get(x).print();
     		}
-    	System.out.println();
+
+    		if (i +1 < this.allSymbolTables.size()) {
+    			System.out.println();
+    		}
     	}
 
     }
