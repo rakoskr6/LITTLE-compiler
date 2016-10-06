@@ -9,7 +9,7 @@ grammar Micro;
 // Program
 program
     : 'PROGRAM' id 'BEGIN' pgm_body 'END';
-ifd
+id
     : IDENTIFIER ;
 pgm_body // GLOBAL
     : decl func_declarations ;
