@@ -55,7 +55,7 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     @Override
     public void enterPgm_body(MicroParser.Pgm_bodyContext ctx) {
-        SymbolTable global = new SymbolTable("Global");
+        SymbolTable global = new SymbolTable("GLOBAL");
         this.allSymbolTables.add(global); 
     }
 
@@ -63,11 +63,13 @@ class AntlrGlobalListener extends MicroBaseListener {
     public void exitPgm_body(MicroParser.Pgm_bodyContext ctx) {
         
     	for (int i = 0; i < this.allSymbolTables.size(); i++) {
-    		System.out.println("Scope " + this.allSymbolTables.get(i).scope);
+    		System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
     		for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
     			this.allSymbolTables.get(i).objectList.get(x).print();
     		}
+    	System.out.println();
     	}
+
     }
 
     @Override 
@@ -83,7 +85,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     public void enterIf_stmt(MicroParser.If_stmtContext ctx) { 
     	// Create new symbol table with blockCounter
     	//System.out.println("\n" + blockCounter++);
-    	SymbolTable ifst = new SymbolTable(Integer.toString(blockCounter++));
+    	SymbolTable ifst = new SymbolTable("BLOCK " + blockCounter++);
         this.allSymbolTables.add(ifst); 
 
     }
@@ -93,7 +95,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     	// Create new symbol table with blockCounter
     	if (!ctx.getText().isEmpty()) { // don't want to add else block if unused
 	    	//System.out.println("\n" + blockCounter++);
-	    	SymbolTable elst = new SymbolTable(Integer.toString(blockCounter++));
+	    	SymbolTable elst = new SymbolTable("BLOCK " + blockCounter++);
         	this.allSymbolTables.add(elst); 
 	    	
     	}	
@@ -105,7 +107,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     public void enterDo_while_stmt(MicroParser.Do_while_stmtContext ctx) { 
     	// Create new symbol table with blockCounter
     	//System.out.println("\n" + blockCounter++);
-    	SymbolTable dowhl = new SymbolTable(Integer.toString(blockCounter++));
+    	SymbolTable dowhl = new SymbolTable("BLOCK " + blockCounter++);
         this.allSymbolTables.add(dowhl);
     }
  
@@ -168,7 +170,7 @@ class SymbolObject { // This class contains variable name, type, and (optionally
 	public SymbolObject(String varType, String varName) {
 		this.varName = varName;
 		this.varType = varType;
-		this.varValue = "";
+		//this.varValue = "";
 	}
 
 	public SymbolObject(String varType, String varName, String varValue) {
@@ -178,10 +180,10 @@ class SymbolObject { // This class contains variable name, type, and (optionally
 	}
 
 	public void print() {
-		System.out.print(this.varName + " ");
-		System.out.print(this.varType + " ");
-		if (!this.varValue.isEmpty()) {
-			System.out.print(varValue);
+		System.out.print("name " + this.varName + " ");
+		System.out.print("type " + this.varType);
+		if (this.varValue != null) {
+			System.out.print(" value " + varValue);
 		}
 		System.out.println("");
 	}
