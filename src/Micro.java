@@ -43,7 +43,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     public List<SymbolTable> allSymbolTables = new ArrayList<SymbolTable>();
 
     public AntlrGlobalListener() {
-      this.blockCounter = 1;
+        this.blockCounter = 1;
     }
 
 
@@ -88,14 +88,14 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override 
     public void enterFunc_decl(MicroParser.Func_declContext ctx) { 
         SymbolTable func = new SymbolTable(ctx.getChild(2).getText());
-      this.allSymbolTables.add(func); 
+        this.allSymbolTables.add(func); 
 
     }
 
     @Override 
     public void enterIf_stmt(MicroParser.If_stmtContext ctx) { 
         SymbolTable ifst = new SymbolTable("BLOCK " + blockCounter++);
-      this.allSymbolTables.add(ifst); 
+        this.allSymbolTables.add(ifst); 
 
     }
 
@@ -103,14 +103,14 @@ class AntlrGlobalListener extends MicroBaseListener {
     public void enterElse_part(MicroParser.Else_partContext ctx) { 
         if (!ctx.getText().isEmpty()) { // don't want to add else block if unused
             SymbolTable elst = new SymbolTable("BLOCK " + blockCounter++);
-        this.allSymbolTables.add(elst);             
+            this.allSymbolTables.add(elst);             
         }    
     }
 
     @Override 
     public void enterDo_while_stmt(MicroParser.Do_while_stmtContext ctx) { 
-      SymbolTable dowhl = new SymbolTable("BLOCK " + blockCounter++);
-      this.allSymbolTables.add(dowhl);
+        SymbolTable dowhl = new SymbolTable("BLOCK " + blockCounter++);
+        this.allSymbolTables.add(dowhl);
     }
  
 
@@ -120,8 +120,8 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     @Override
     public void enterString_decl(MicroParser.String_declContext ctx) {
-      SymbolObject newSymbolObject = new SymbolObject("STRING", ctx.getChild(1).getText(), ctx.getChild(3).getText());
-      allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+        SymbolObject newSymbolObject = new SymbolObject("STRING", ctx.getChild(1).getText(), ctx.getChild(3).getText());
+        allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
     }
 
     @Override 
@@ -138,8 +138,8 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override 
     public void enterParam_decl(MicroParser.Param_declContext ctx) { 
         SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), ctx.getChild(1).getText());
-    allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
-    // possibly need to handle multiple variables seperately
+        allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+        // possibly need to handle multiple variables seperately
     }
 
 
