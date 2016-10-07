@@ -11,11 +11,9 @@ for testfile in `ls testcases/input/ | sort -V` ; do
   echo "Testing file: $testfile"
   if [[ $OSTYPE == "cygwin" ]] ; then
     output=$(java -cp "classes/;lib/antlr.jar" Micro testcases/input/$testfile)
-    echo "Output:   $output"
     expected=$(cat testcases/output/$allstrip.out)
-    echo "Expected: $expected"
-    output=$(echo $output | tr -d '\r')
-    if [ "$output" = "$expected" ] ; then
+    diff -y <(echo $output) <(echo $expected)
+    if [ $? -eq 0 ] ; then
       printf "\033[0;32mPASSED\n\033[0m"
       (( cases_passed += 1 ))
       (( cases_total += 1 ))
@@ -24,10 +22,8 @@ for testfile in `ls testcases/input/ | sort -V` ; do
       (( cases_total += 1 ))
     fi
   elif [[ $OSTYPE == "linux-gnu" ]] ; then
-    output=$(java -cp classes/:lib/antlr.jar Micro testcases/input/$testfile)
-    
-    expected=$(cat testcases/output/$allstrip.out)
-    
+    output=$(java -cp classes/:lib/antlr.jar Micro testcases/input/$testfile) 
+    expected=$(cat testcases/output/$allstrip.out) 
     diff -y <(echo $output) <(echo $expected)
     if [ $? -eq 0 ] ; then
       printf "\033[0;32mPASSED\n\033[0m"
