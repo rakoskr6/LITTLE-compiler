@@ -17,3 +17,7 @@ hs_err_pid*
 # Makefile ignores
 classes/
 build/
+
+# Keeping out the honest idiots
+a.out
+tiny
