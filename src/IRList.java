@@ -22,6 +22,6 @@ public class IRList {
         this.listIR.add(node);
     }
     public void appendNode(String opcode, String operand1, String operand2, String result) {
-        this.listIR.add(IRNode(opcode, operand1, operand2, result));
+        this.listIR.add(new IRNode(opcode, operand1, operand2, result));
     }
 }
