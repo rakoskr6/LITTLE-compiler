@@ -1,7 +1,7 @@
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.*;
-import java.lang.String;
+import java.lang.*;
 import java.io.*;
 
 class AntlrGlobalListener extends MicroBaseListener {
@@ -56,7 +56,59 @@ class AntlrGlobalListener extends MicroBaseListener {
                     + " " + inode.getOperand2() + " " + inode.getResult());
             }
         }
+
         System.out.println(";tiny code");
+
+        for(int i = 0; i < this.allSymbolTables.get(0).objectList.size(); ++i) {
+            System.out.println("var " + this.allSymbolTables.get(0).objectList.get(i).varName);
+        }
+
+        for(IRList ilist : allIRLists) {
+            for(IRNode inode : ilist.getList()) {
+                String op = inode.getOpcode();
+                String opd1 = inode.getOperand1();
+                String opd2 = inode.getOperand2();
+                String res = inode.getResult();
+                if(opd1.matches("^\\$T\\d+$")) {
+                    int val = new Scanner(opd1).useDelimiter("\\D+").nextInt();
+                    opd1 = "" + "r" + Integer.toString(val-1);
+                    // System.out.println(opd1);
+                }
+                if(opd2.matches("^\\$T\\d+$")) {
+                    int val = new Scanner(opd2).useDelimiter("\\D+").nextInt();
+                    opd2 = "" + "r" + Integer.toString(val-1);
+                    // System.out.println(opd2);
+                }
+                if(res.matches("^\\$T\\d+$")) {
+                    int val = new Scanner(res).useDelimiter("\\D+").nextInt();
+                    res = "" + "r" + Integer.toString(val-1);
+                    // System.out.println(res);
+                }
+                if(op.contains("STORE")) {
+                    System.out.println("move " + opd1 + " " + res);
+                }
+                else if(op.contains("ADD")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("addi " + opd2 + " " + res);
+                }
+                else if(op.contains("SUB")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("subi " + opd2 + " " + res);
+                }
+                else if(op.contains("MULT")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("muli " + opd2 + " " + res);
+                }
+                else if(op.contains("DIV")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("divi " + opd2 + " " + res);
+                }
+                else if(op.contains("WRITE")) {
+                    System.out.println("sys writei " + opd1);
+                }
+            }
+        }
+        System.out.println("sys halt");
 
     }
 
