@@ -7,6 +7,7 @@ import java.io.*;
 class AntlrGlobalListener extends MicroBaseListener {
     private int blockCounter;
     public List<SymbolTable> allSymbolTables = new ArrayList<SymbolTable>();
+    private List<IRList> allIRLists = new ArrayList<IRList>();
 
     public AntlrGlobalListener() {
         this.blockCounter = 1;
@@ -38,16 +39,24 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
 
         // Print output
-        for (int i = 0; i < this.allSymbolTables.size(); i++) {
-            System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
-            for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
-                this.allSymbolTables.get(i).objectList.get(x).print();
-            }
+        // for (int i = 0; i < this.allSymbolTables.size(); i++) {
+        //     System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
+        //     for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
+        //         this.allSymbolTables.get(i).objectList.get(x).print();
+        //     }
 
-            if (i +1 < this.allSymbolTables.size()) { // remove trailing extra newline
-                System.out.println();
+        //     if (i +1 < this.allSymbolTables.size()) { // remove trailing extra newline
+        //         System.out.println();
+        //     }
+        // }
+
+        for(IRList ilist : allIRLists) {
+            for(IRNode inode : ilist.getList()) {
+                System.out.println(";" + inode.getOpcode() + " " + inode.getOperand1() 
+                    + " " + inode.getOperand2() + " " + inode.getResult());
             }
         }
+        System.out.println(";tiny code");
 
     }
 
@@ -130,12 +139,27 @@ class AntlrGlobalListener extends MicroBaseListener {
         ArrayList<String> rpn_list = converter.expressionParse(ctx.getChild(2).getText());
         RPNTree rpn_tree = new RPNTree();
         rpn_tree = rpn_tree.parseRPNList(rpn_list);
-        System.out.println(rpn_tree);
+        IRList ir = new IRList();
+        ir = rpn_tree.rhsIRGen(ir, rpn_tree);
+        if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+            rpn_tree.regnum++;
+            ir.appendNode("STOREI", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+        }
+        ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
+        // for(IRNode inode : ir.getList()) {
+        //     System.out.println(inode.getOpcode() + " " + inode.getOperand1() 
+        //         + " " + inode.getOperand2() + " " + inode.getResult());
+        // }
+        allIRLists.add(ir);
     }
 
-    // @Override
-    // public void enterPrimary(MicroParser.PrimaryContext ctx) {
-    //     System.out.println("\t\t\tPrimary: " + ctx.getText());
-    // }
+    @Override
+    public void enterWrite_stmt(MicroParser.Write_stmtContext ctx) {
+        IRList ir = new IRList();
+        ir.appendNode("WRITEI", ctx.getChild(2).getText(), "", "");
+        // System.out.println(ir.getNode().getOpcode() + " " + ir.getNode().getOperand1() 
+                // + " " + ir.getNode().getOperand2() + " " + ir.getNode().getResult());
+        allIRLists.add(ir);
+    }
     
 }
