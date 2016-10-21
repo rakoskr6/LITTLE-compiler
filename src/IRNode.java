@@ -27,7 +27,7 @@ public class IRNode {
     public String getOperand1() {
         return this.operand1;
     }
-    public String getOperade2() {
+    public String getOperand2() {
         return this.operand2;
     }
     public String getResult() {
