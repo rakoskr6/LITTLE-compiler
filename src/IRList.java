@@ -11,6 +11,10 @@ import java.io.*;
 public class IRList {
     private List<IRNode> listIR = new ArrayList<IRNode>();
 
+    public List<IRNode> getList() {
+        return this.listIR;
+    }
+
     public IRNode getNode() {
         return this.listIR.get(listIR.size()-1);
     }
