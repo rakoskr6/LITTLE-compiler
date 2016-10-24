@@ -7,6 +7,7 @@ public class RPNTree {
     private RPNTree left_child;
     private RPNTree right_child;
     Hashtable<String, String> opHash = new Hashtable<String, String>();
+    Hashtable<String, String> opHashFloat = new Hashtable<String, String>();
     public static Integer regnum = 0;
 
     public RPNTree() {
@@ -14,6 +15,7 @@ public class RPNTree {
         this.left_child  = null;
         this.right_child = null;
         setOpHash();
+        setOpHashFloat();
     }
 
     private void setOpHash() {
@@ -21,6 +23,13 @@ public class RPNTree {
         this.opHash.put("*", "MULTI");
         this.opHash.put("+", "ADDI");
         this.opHash.put("-", "SUBI");
+    }
+
+    private void setOpHashFloat() {
+        this.opHashFloat.put("/", "DIVF");
+        this.opHashFloat.put("*", "MULTF");
+        this.opHashFloat.put("+", "ADDF");
+        this.opHashFloat.put("-", "SUBF");
     }
 
     public RPNTree parseRPNList(ArrayList<String> rpnList) {
@@ -68,6 +77,32 @@ public class RPNTree {
         return curr_list;
     }
 
+    public IRList rhsIRGenFloat(IRList curr_list, RPNTree root) {
+        if(root.left_child != null) {
+            curr_list = rhsIRGenFloat(curr_list, root.left_child);
+        }
+        if(root.right_child != null) {
+            curr_list = rhsIRGenFloat(curr_list, root.right_child);
+        }
+        if(opHashFloat.containsKey(root.value)) {
+            if(root.left_child.value.matches("^\\d+(?:\\.\\d+)?$")) {
+                regnum++;
+                curr_list.appendNode(new IRNode("STOREF", root.left_child.value, "", "$T"+Integer.toString(regnum)));
+                root.left_child.setValue("$T"+Integer.toString(regnum));
+            }
+            if(root.right_child.value.matches("^\\d+(?:\\.\\d+)?$")) {
+                regnum++;
+                curr_list.appendNode(new IRNode("STOREF", root.right_child.value, "", "$T"+Integer.toString(regnum)));
+                root.right_child.setValue("$T"+Integer.toString(regnum));
+            }
+            regnum++;
+            curr_list.appendNode(new IRNode(opHashFloat.get(root.value), 
+                root.left_child.value, root.right_child.value, "$T"+Integer.toString(regnum)));
+            root.setValue("$T"+Integer.toString(regnum));
+        }
+        return curr_list;
+    }
+
     private boolean isOperator(String str) {
         return Arrays.asList("+","-","*","/").contains(str);
     }
@@ -95,17 +130,26 @@ public class RPNTree {
     }
 
     // public static void main(String []args) {
-    //     ShuntingYardConverter conv = new ShuntingYardConverter();
-    //     // ArrayList<String> rpn_list = conv.expressionParse("c+a*b+(a*b+c)/a+20");
-    //     ArrayList<String> rpn_list = conv.expressionParse("b*b+a");
-    //     System.out.println(rpn_list);
-    //     RPNTree tree = new RPNTree();
-    //     tree = tree.parseRPNList(rpn_list);
+    //     ShuntingYardConverter converter = new ShuntingYardConverter();
+    //     ArrayList<String> rpn_list = converter.expressionParse(ctx.getChild(2).getText());
+    //     RPNTree rpn_tree = new RPNTree();
+    //     rpn_tree = rpn_tree.parseRPNList(rpn_list);
     //     IRList ir = new IRList();
-    //     ir = tree.rhsIRGen(ir, tree);
-    //     for(IRNode inode : ir.getList()) {
-    //         System.out.println(inode.getOpcode() + " " + inode.getOperand1() 
-    //             + " " + inode.getOperand2() + " " + inode.getResult());
+    //     if(varTypeTable.get(ctx.getChild(0)) == "INT") {
+    //         ir = rpn_tree.rhsIRGen(ir, rpn_tree);
+    //         if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+    //             rpn_tree.regnum++;
+    //             ir.appendNode("STOREI", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+    //         }
+    //         ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
+    //     }
+    //     else {
+    //         ir = rpn_tree.rhsIRGenFloat(ir, rpn_tree);
+    //         if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+    //             rpn_tree.regnum++;
+    //             ir.appendNode("STOREF", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+    //         }
+    //         ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
     //     }
     // }
 

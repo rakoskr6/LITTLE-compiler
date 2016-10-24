@@ -8,6 +8,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     private int blockCounter;
     public List<SymbolTable> allSymbolTables = new ArrayList<SymbolTable>();
     private List<IRList> allIRLists = new ArrayList<IRList>();
+    private Hashtable<String,String> varTypeTable = new Hashtable<String,String>();
 
     public AntlrGlobalListener() {
         this.blockCounter = 1;
@@ -84,27 +85,49 @@ class AntlrGlobalListener extends MicroBaseListener {
                     res = "" + "r" + Integer.toString(val-1);
                     // System.out.println(res);
                 }
-                if(op.contains("STORE")) {
+                if(op.equals("STOREI")) {
                     System.out.println("move " + opd1 + " " + res);
                 }
-                else if(op.contains("ADD")) {
+                else if(op.equals("STOREF")) {
+                    System.out.println("move " + opd1 + " " + res);
+                }
+                else if(op.equals("ADDI")) {
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("addi " + opd2 + " " + res);
                 }
-                else if(op.contains("SUB")) {
+                else if(op.equals("ADDF")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("addr " + opd2 + " " + res);
+                }
+                else if(op.equals("SUBI")) {
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("subi " + opd2 + " " + res);
                 }
-                else if(op.contains("MULT")) {
+                else if(op.equals("SUBF")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("subr " + opd2 + " " + res);
+                }
+                else if(op.equals("MULTI")) {
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("muli " + opd2 + " " + res);
                 }
-                else if(op.contains("DIV")) {
+                else if(op.equals("MULTF")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("mulr " + opd2 + " " + res);
+                }
+                else if(op.equals("DIVI")) {
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divi " + opd2 + " " + res);
                 }
-                else if(op.contains("WRITE")) {
+                else if(op.equals("DIVF")) {
+                    System.out.println("move " + opd1 + " " + res);
+                    System.out.println("divr " + opd2 + " " + res);
+                }
+                else if(op.equals("WRITEI")) {
                     System.out.println("sys writei " + opd1);
+                }
+                else if(op.equals("WRITEF")) {
+                    System.out.println("sys writer " + opd1);
                 }
             }
         }
@@ -159,6 +182,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         for (String varName : varNames.split(",")) {
             SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), varName);
             allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+            varTypeTable.put(varName, ctx.getChild(0).getText());
         }     
   }
 
@@ -169,21 +193,6 @@ class AntlrGlobalListener extends MicroBaseListener {
         // possibly need to handle multiple variables seperately
     }
 
-    // @Override
-    // public void enterExpr(MicroParser.ExprContext ctx) {
-    //     System.out.println("Expr: " + ctx.getText());
-    // }
-
-    // @Override
-    // public void enterExpr_prefix(MicroParser.Expr_prefixContext ctx) {
-    //     System.out.println("\tExpr prefix: " + ctx.getText());
-    // }
-
-    // @Override
-    // public void enterFactor(MicroParser.FactorContext ctx) {
-    //     System.out.println("\t\tFactor: " + ctx.getText());
-    // }
-
     @Override
     public void enterAssign_expr(MicroParser.Assign_exprContext ctx) {
         // System.out.println("RHS: " + ctx.getChild(2).getText());
@@ -192,12 +201,22 @@ class AntlrGlobalListener extends MicroBaseListener {
         RPNTree rpn_tree = new RPNTree();
         rpn_tree = rpn_tree.parseRPNList(rpn_list);
         IRList ir = new IRList();
-        ir = rpn_tree.rhsIRGen(ir, rpn_tree);
-        if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
-            rpn_tree.regnum++;
-            ir.appendNode("STOREI", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+        if(varTypeTable.get(ctx.getChild(0).getText()).equals("INT")) {
+            ir = rpn_tree.rhsIRGen(ir, rpn_tree);
+            if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+                rpn_tree.regnum++;
+                ir.appendNode("STOREI", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+            }
+            ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
         }
-        ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
+        else {
+            ir = rpn_tree.rhsIRGenFloat(ir, rpn_tree);
+            if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+                rpn_tree.regnum++;
+                ir.appendNode("STOREF", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+            }
+            ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
+        }
         // for(IRNode inode : ir.getList()) {
         //     System.out.println(inode.getOpcode() + " " + inode.getOperand1() 
         //         + " " + inode.getOperand2() + " " + inode.getResult());
@@ -208,9 +227,14 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override
     public void enterWrite_stmt(MicroParser.Write_stmtContext ctx) {
         IRList ir = new IRList();
-        ir.appendNode("WRITEI", ctx.getChild(2).getText(), "", "");
+        if(varTypeTable.get(ctx.getChild(2).getText()).equals("INT")) {
+            ir.appendNode("WRITEI", ctx.getChild(2).getText(), "", "");
+        }
+        else {
+            ir.appendNode("WRITEF", ctx.getChild(2).getText(), "", "");
+        }
         // System.out.println(ir.getNode().getOpcode() + " " + ir.getNode().getOperand1() 
-                // + " " + ir.getNode().getOperand2() + " " + ir.getNode().getResult());
+        //         + " " + ir.getNode().getOperand2() + " " + ir.getNode().getResult());
         allIRLists.add(ir);
     }
     
