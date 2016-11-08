@@ -429,11 +429,14 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     @Override
     public void enterAssign_expr(MicroParser.Assign_exprContext ctx) {
-        // System.out.println("RHS: " + ctx.getChild(2).getText());
+        // converts to postfix
         ShuntingYardConverter converter = new ShuntingYardConverter();
-        ArrayList<String> rpn_list = converter.expressionParse(ctx.getChild(2).getText());
+        ArrayList<String> rpn_list = converter.expressionParse(ctx.getChild(2).getText()); 
+
+        // creates abstract syntax tree from list
         RPNTree rpn_tree = new RPNTree();
-        rpn_tree = rpn_tree.parseRPNList(rpn_list);
+        rpn_tree = rpn_tree.parseRPNList(rpn_list); 
+       
         IRList ir = new IRList();
         if(varTypeTable.get(ctx.getChild(0).getText()).equals("INT")) {
             ir = rpn_tree.rhsIRGen(ir, rpn_tree);
