@@ -271,7 +271,6 @@ class AntlrGlobalListener extends MicroBaseListener {
                 "$T" + Integer.toString(RPNTree.regnum), labelStack.peek());
         }
         else {
-            // RPNTree.regnum++; // note: very bad coding practice...
             ShuntingYardConverter converter = new ShuntingYardConverter();
             ArrayList<String> rpn_list = converter.expressionParse(tokenized_list.get(2));
             RPNTree rpn_tree = new RPNTree();
@@ -377,7 +376,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         IRList ir = new IRList();
         String expr = ctx.getChild(5).getText();
         ArrayList<String> tokenized_list = tokenizeConditional(expr);
-        RPNTree.regnum++; // note: very bad coding practice...
+        RPNTree.regnum++;
         if(varTypeTable.get(tokenized_list.get(0)).equals("INT")) {
             ir.appendNode("STOREI", tokenized_list.get(2), "", "$T" + Integer.toString(RPNTree.regnum));
             regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
