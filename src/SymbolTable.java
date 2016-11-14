@@ -17,4 +17,11 @@ class SymbolTable { // This symbol table contains a list of declarations
         this.objectList.add(obj);
     }
 
+    public void printSymbolTable() {
+            System.out.println("Symbol table " + this.scope);
+            for (int x = 0; x < this.objectList.size(); x++) {
+                this.objectList.get(x).print();
+            }
+        }
+
 }
