@@ -26,8 +26,8 @@ for testfile in `ls testcases/input/*.micro | sort -V` ; do
     rm tmpfile_deleteme
   elif [[ $OSTYPE == "linux-gnu" ]] ; then
     java -cp classes/:lib/antlr.jar Micro $testfile > tmpfile_deleteme
-    output=$(tiny tmpfile_deleteme < $extstrip.input | head -1)
-    expected=$(tiny testcases/output/$allstrip.out < $extstrip.input | head -1) 
+    output=$(./tiny tmpfile_deleteme < $extstrip.input | head -1)
+    expected=$(./tiny testcases/output/$allstrip.out < $extstrip.input | head -1) 
     diff -y <(echo $output) <(echo $expected)
     if [ $? -eq 0 ] ; then
       printf "\033[0;32mPASSED\n\033[0m"
