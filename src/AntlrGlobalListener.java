@@ -78,8 +78,11 @@ class AntlrGlobalListener extends MicroBaseListener {
         for(int i = 0; i < this.allSymbolTables.get(0).objectList.size(); ++i) {
             System.out.println("var " + this.allSymbolTables.get(0).objectList.get(i).varName);
         }
+        // Print this every time
+        System.out.println("push \npush r0 \npush r1 \npush r2 \npush r3 \njsr main\nsys halt");
 
         for(IRList ilist : allIRLists) {
+           
             for(IRNode inode : ilist.getList()) {
                 String op = inode.getOpcode();
                 String opd1 = inode.getOperand1();
@@ -201,6 +204,11 @@ class AntlrGlobalListener extends MicroBaseListener {
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jne " + res);
+                }
+                
+                else if(op.equals("LINK")) {
+                    int numVar = 0;// make equal to #variables in function
+                    System.out.println("link" + numVar);
                 }
                 else {
                     System.out.println("Unsupported operation: " + op);
