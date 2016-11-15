@@ -73,6 +73,7 @@ class AntlrGlobalListener extends MicroBaseListener {
 
        
         
+        /*
         System.out.println(";tiny code");
 
         for(int i = 0; i < this.allSymbolTables.get(0).objectList.size(); ++i) {
@@ -216,6 +217,7 @@ class AntlrGlobalListener extends MicroBaseListener {
             }
         }
         System.out.println("sys halt");
+        */
         
         
     }
@@ -224,7 +226,11 @@ class AntlrGlobalListener extends MicroBaseListener {
     public void enterFunc_decl(MicroParser.Func_declContext ctx) { 
         SymbolTable func = new SymbolTable(ctx.getChild(2).getText());
         this.allSymbolTables.add(func); 
+    }
 
+    @Override
+    public void exitFunc_decl(MicroParser.Func_declContext ctx) {
+        this.allSymbolTables.get(this.allSymbolTables.size()-1).printSymbolTable();
     }
 
     private void populateLogicalOps() {
