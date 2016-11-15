@@ -1,0 +1,26 @@
+PROGRAM factorial2
+BEGIN
+	STRING input := "Please enter an integer number: ";
+	STRING eol := "\n";
+	
+	FUNCTION INT factorial()
+	BEGIN
+		INT ret;
+		INT tret;
+		tret := 1;
+		IF (TRUE)
+			ret := tret*1;
+    ENDIF
+	END
+
+	FUNCTION INT main ()
+	BEGIN
+		INT num;
+		INT result;
+		num := 1;
+		
+		IF(num = 1)
+			result := 1;
+		ENDIF
+	END
+END

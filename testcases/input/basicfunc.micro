@@ -1,0 +1,15 @@
+PROGRAM factorial2
+BEGIN
+	FUNCTION INT factorial(INT a)
+	BEGIN
+		INT ret;
+    ret := 1;
+		RETURN ret;
+	END
+
+	FUNCTION INT main ()
+	BEGIN
+		INT result;
+    result := factorial(3); 
+	END
+END
