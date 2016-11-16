@@ -59,20 +59,38 @@ public class RPNTree {
             curr_list = rhsIRGen(curr_list, root.right_child);
         }
         if(opHash.containsKey(root.value)) {
-            if(root.left_child.value.matches("^\\d+(?:\\.\\d+)?$")) {
+            String operator = root.value;
+            String opd1 = root.left_child.value;
+            String opd2 = root.right_child.value;
+            if(opd1.matches("^\\d+(?:\\.\\d+)?$")) {
                 regnum++;
-                curr_list.appendNode(new IRNode("STOREI", root.left_child.value, "", "$T"+Integer.toString(regnum)));
+                curr_list.appendNode(new IRNode("STOREI", opd1, "", "$T"+Integer.toString(regnum)));
                 root.left_child.setValue("$T"+Integer.toString(regnum));
             }
-            if(root.right_child.value.matches("^\\d+(?:\\.\\d+)?$")) {
+            if(opd2.matches("^\\d+(?:\\.\\d+)?$")) {
                 regnum++;
-                curr_list.appendNode(new IRNode("STOREI", root.right_child.value, "", "$T"+Integer.toString(regnum)));
+                curr_list.appendNode(new IRNode("STOREI", opd2, "", "$T"+Integer.toString(regnum)));
                 root.right_child.setValue("$T"+Integer.toString(regnum));
             }
-            regnum++;
-            curr_list.appendNode(new IRNode(opHash.get(root.value), 
-                root.left_child.value, root.right_child.value, "$T"+Integer.toString(regnum)));
-            root.setValue("$T"+Integer.toString(regnum));
+            SymbolTable st = AntlrGlobalListener.allSymbolTables.get(AntlrGlobalListener.allSymbolTables.size()-1);
+            if(st.scope.equals("GLOBAL") || (opd1.contains("$T") && opd2.contains("$T"))) {
+                regnum++;
+                curr_list.appendNode(new IRNode(opHash.get(operator), 
+                    opd1, opd2, "$T"+Integer.toString(regnum)));
+                root.setValue("$T"+Integer.toString(regnum));
+            }
+            else {
+                if(!opd1.contains("$T")) {
+                    opd1 = getScopeReg(opd1);
+                }
+                if(!opd2.contains("$T")) {
+                    opd2 = getScopeReg(opd2);
+                }
+                regnum++;
+                curr_list.appendNode(new IRNode(opHash.get(operator), 
+                    opd1, opd2, "$T"+Integer.toString(regnum)));
+                root.setValue("$T"+Integer.toString(regnum));
+            }
         }
         return curr_list;
     }
@@ -85,22 +103,47 @@ public class RPNTree {
             curr_list = rhsIRGenFloat(curr_list, root.right_child);
         }
         if(opHashFloat.containsKey(root.value)) {
-            if(root.left_child.value.matches("^\\d+(?:\\.\\d+)?$")) {
+            String operator = root.value;
+            String opd1 = root.left_child.value;
+            String opd2 = root.right_child.value;
+            if(opd1.matches("^\\d+(?:\\.\\d+)?$")) {
                 regnum++;
-                curr_list.appendNode(new IRNode("STOREF", root.left_child.value, "", "$T"+Integer.toString(regnum)));
+                curr_list.appendNode(new IRNode("STOREF", opd1, "", "$T"+Integer.toString(regnum)));
                 root.left_child.setValue("$T"+Integer.toString(regnum));
             }
-            if(root.right_child.value.matches("^\\d+(?:\\.\\d+)?$")) {
+            if(opd2.matches("^\\d+(?:\\.\\d+)?$")) {
                 regnum++;
-                curr_list.appendNode(new IRNode("STOREF", root.right_child.value, "", "$T"+Integer.toString(regnum)));
+                curr_list.appendNode(new IRNode("STOREF", opd2, "", "$T"+Integer.toString(regnum)));
                 root.right_child.setValue("$T"+Integer.toString(regnum));
             }
+            SymbolTable st = AntlrGlobalListener.allSymbolTables.get(AntlrGlobalListener.allSymbolTables.size()-1);
+            if(!(st.scope.equals("GLOBAL") || (opd1.contains("$T") && opd2.contains("$T")))) {
+                if(!opd1.contains("$T")) {
+                    opd1 = getScopeReg(opd1);
+                }
+                if(!opd2.contains("$T")) {
+                    opd2 = getScopeReg(opd2);
+                }
+            }
             regnum++;
-            curr_list.appendNode(new IRNode(opHashFloat.get(root.value), 
-                root.left_child.value, root.right_child.value, "$T"+Integer.toString(regnum)));
+            curr_list.appendNode(new IRNode(opHashFloat.get(operator), 
+                opd1, opd2, "$T"+Integer.toString(regnum)));
             root.setValue("$T"+Integer.toString(regnum));
         }
         return curr_list;
+    }
+
+    private String getScopeReg(String value) {
+        for(int i = AntlrGlobalListener.allSymbolTables.size()-1; i >= 0; --i) {
+            SymbolTable currTable = AntlrGlobalListener.allSymbolTables.get(i);
+            String lookup = currTable.getScopeRegByVarName(value);
+            if(!lookup.equals("")) 
+                return lookup;
+            if(!currTable.scope.contains("BLOCK") && !currTable.scope.equals("GLOBAL")) {
+                i = 1; // move to GLOBAL
+            }
+        }
+        return "";
     }
 
     private boolean isOperator(String str) {
