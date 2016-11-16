@@ -433,7 +433,29 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override
     public void enterRead_stmt(MicroParser.Read_stmtContext ctx) {
         IRList ir = new IRList();
-        ir.appendNode("READI", "", "", ctx.getChild(2).getText());
+        String[] read_vals = ctx.getChild(2).getText().split(",");
+        for (String read_val : read_vals) {
+            String var_name = read_val;
+            String var_type = varTypeTable.get(var_name);
+            String scopeReg = getScopeReg(var_name);
+            String op_type = "";
+            if(var_type.equals("INT")) {
+                op_type = "I";
+            }
+            else if (var_type.equals("FLOAT")) {
+                op_type = "F";
+            }
+            else {
+                op_type = "S";
+            }
+            if(!scopeReg.equals("")) {
+                ir.appendNode("READ" + op_type, "", "", scopeReg);
+            }
+            else {
+                ir.appendNode("READ" + op_type, "", "", var_name);
+            }
+        }
+
         allIRLists.add(ir);
     }
 
@@ -443,7 +465,10 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override
     public void enterString_decl(MicroParser.String_declContext ctx) {
         SymbolObject newSymbolObject = new SymbolObject("STRING", ctx.getChild(1).getText(), ctx.getChild(3).getText());
+        newSymbolObject.scopeReg = "GLOB";
         allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
+
+        varTypeTable.put(ctx.getChild(1).getText(), "STRING");
     }
 
     @Override 
@@ -456,6 +481,9 @@ class AntlrGlobalListener extends MicroBaseListener {
             if(!allSymbolTables.get(allSymbolTables.size()-1).scope.equals("GLOBAL")) {
                 newSymbolObject.scopeReg = "$L" + Integer.toString(localCounter);
                 localCounter += 1;
+            }
+            else {
+                newSymbolObject.scopeReg = "GLOB";
             }
             allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
             varTypeTable.put(varName, ctx.getChild(0).getText());
@@ -534,20 +562,32 @@ class AntlrGlobalListener extends MicroBaseListener {
                 i = 1; // move to GLOBAL
             }
         }
-        return "garbage";
+        return "not present";
     }
 
-    // @Override
-    // public void enterWrite_stmt(MicroParser.Write_stmtContext ctx) {
-    //     IRList ir = new IRList();
-    //     if(varTypeTable.get(ctx.getChild(2).getText()).equals("INT")) {
-    //         ir.appendNode("WRITEI", ctx.getChild(2).getText(), "", "");
-    //     }
-    //     else {
-    //         ir.appendNode("WRITEF", ctx.getChild(2).getText(), "", "");
-    //     }
-    //     allIRLists.add(ir);
-    // }
+    @Override
+    public void enterWrite_stmt(MicroParser.Write_stmtContext ctx) {
+        IRList ir = new IRList();
+        String[] write_vals = ctx.getChild(2).getText().split(",");
+        for(String write_val : write_vals) {
+            String var_type = varTypeTable.get(write_val);
+            String scopeReg = getScopeReg(write_val);
+            String write_out = scopeReg;
+            if(scopeReg.equals("GLOB")) {
+                write_out = write_val;
+            }
+            if(var_type.equals("INT")) {
+                ir.appendNode("WRITEI", write_out, "", "");
+            }
+            else if(var_type.equals("STRING")) {
+                ir.appendNode("WRITES", write_out, "", "");
+            }
+            else {
+                ir.appendNode("WRITEF", write_out, "", "");
+            }
+        }
+        allIRLists.add(ir);
+    }
 
     @Override
     public void enterReturn_stmt(MicroParser.Return_stmtContext ctx) {
