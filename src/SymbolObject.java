@@ -8,6 +8,7 @@ class SymbolObject { // This class contains variable name, type, and (optionally
     public String varName;
     public String varType;
     public String varValue;
+    public String scopeReg;
 
     public SymbolObject(String varType, String varName) {
         this.varType = varType;
@@ -20,11 +21,21 @@ class SymbolObject { // This class contains variable name, type, and (optionally
         this.varValue = varValue;
     }
 
+    public SymbolObject(String varType, String varName, String varValue, String scopeReg) {
+        this.varType = varType;
+        this.varName = varName;
+        this.varValue = varValue;
+        this.scopeReg = scopeReg;
+    }
+
     public void print() {
         System.out.print("name " + this.varName + " ");
         System.out.print("type " + this.varType);
         if (this.varValue != null) {
-            System.out.print(" value " + varValue);
+            System.out.print(" value " + this.varValue);
+        }
+        if (this.scopeReg != null) {
+            System.out.print(" scopeReg " + this.scopeReg);
         }
         System.out.println("");
     }
