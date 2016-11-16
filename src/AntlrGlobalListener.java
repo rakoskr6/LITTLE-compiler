@@ -478,6 +478,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         String lhs = ctx.getChild(0).getText();
         String rhs = ctx.getChild(2).getText();
 
+
         // converts to postfix
         ShuntingYardConverter converter = new ShuntingYardConverter();
         ArrayList<String> rpn_list = converter.expressionParse(rhs); 
@@ -565,10 +566,10 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
         else { // RETURN a;
             if(varTypeTable.get(return_val).equals("INT")) {
-
+                ir.appendNode("STOREI", getScopeReg(return_val), "", "R");
             }
             else {
-
+                ir.appendNode("STOREF", getScopeReg(return_val), "", "R");
             }
         }
         ir.appendNode("RET", "", "", "");
