@@ -6,7 +6,9 @@ import java.io.*;
 
 class AntlrGlobalListener extends MicroBaseListener {
     private int blockCounter;
-    public List<SymbolTable> allSymbolTables = new ArrayList<SymbolTable>();
+    public int paramCounter;
+    public int localCounter;
+    public static List<SymbolTable> allSymbolTables = new ArrayList<SymbolTable>();
     private List<IRList> allIRLists = new ArrayList<IRList>();
     private Hashtable<String,String> varTypeTable = new Hashtable<String,String>();
     private Hashtable<String,String> regTypeTable = new Hashtable<String,String>();
@@ -18,10 +20,15 @@ class AntlrGlobalListener extends MicroBaseListener {
     private Stack<String> labelStack = new Stack<String>();
     private Stack<String> exitStack = new Stack<String>();
 
+    // debug
+    public boolean debugST = false;
+
     public AntlrGlobalListener() {
         this.blockCounter = 1;
         this.regCounter   = 1;
         this.labelCounter = 1;
+        this.paramCounter = 1;
+        this.localCounter = 1;
         populateLogicalOps();
     }
 
@@ -51,7 +58,7 @@ class AntlrGlobalListener extends MicroBaseListener {
             }
         }
 
-        // Print output
+        // Symbol table expulsion
         // for (int i = 0; i < this.allSymbolTables.size(); i++) {
         //     System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
         //     for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
@@ -62,12 +69,21 @@ class AntlrGlobalListener extends MicroBaseListener {
         //         System.out.println();
         //     }
         // }
+        if(this.debugST) {
+            System.out.println("START ALL SYMBOL TABLE DEBUG INFORMATION");
+            for (SymbolTable st : this.allSymbolTables) {
+                st.printSymbolTable();
+            }
+            System.out.println("END ALL SYMBOL TABLE DEBUG INFORMATION\n");
+        }
 
         System.out.println(";IR code");
         for(IRList ilist : allIRLists) {
             for(IRNode inode : ilist.getList()) {
                 System.out.println(";" + inode.getOpcode() + " " + inode.getOperand1() 
                     + " " + inode.getOperand2() + " " + inode.getResult());
+                if(inode.getOpcode().equals("RET"))
+                    System.out.println();
             }
         }
 
@@ -224,13 +240,21 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     @Override 
     public void enterFunc_decl(MicroParser.Func_declContext ctx) { 
-        SymbolTable func = new SymbolTable(ctx.getChild(2).getText());
+        // global symbol tables
+        String func_name = ctx.getChild(2).getText();
+        SymbolTable func = new SymbolTable(func_name);
         this.allSymbolTables.add(func); 
-    }
+        // function superscope tables
 
-    @Override
-    public void exitFunc_decl(MicroParser.Func_declContext ctx) {
-        this.allSymbolTables.get(this.allSymbolTables.size()-1).printSymbolTable();
+        paramCounter = 1;
+        localCounter = 1;
+        // RPNTree.regnum = 0;
+
+        IRList ir = new IRList();
+        ir.appendNode("LABEL", func_name, "", "");
+        ir.appendNode("LINK", "", "", "");
+
+        allIRLists.add(ir);
     }
 
     private void populateLogicalOps() {
@@ -429,6 +453,10 @@ class AntlrGlobalListener extends MicroBaseListener {
 
         for (String varName : varNames.split(",")) {
             SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), varName);
+            if(!allSymbolTables.get(allSymbolTables.size()-1).scope.equals("GLOBAL")) {
+                newSymbolObject.scopeReg = "$L" + Integer.toString(localCounter);
+                localCounter += 1;
+            }
             allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
             varTypeTable.put(varName, ctx.getChild(0).getText());
         }     
@@ -437,60 +465,113 @@ class AntlrGlobalListener extends MicroBaseListener {
     @Override 
     public void enterParam_decl(MicroParser.Param_declContext ctx) { 
         SymbolObject newSymbolObject = new SymbolObject(ctx.getChild(0).getText(), ctx.getChild(1).getText());
+        newSymbolObject.scopeReg = "$P" + Integer.toString(paramCounter);
+        paramCounter += 1;
         allSymbolTables.get(allSymbolTables.size()-1).addObject(newSymbolObject);
         // possibly need to handle multiple variables seperately
+        varTypeTable.put(ctx.getChild(1).getText(), ctx.getChild(0).getText());
     }
 
     @Override
     public void enterAssign_expr(MicroParser.Assign_exprContext ctx) {
+        // expression slicing into sides
+        String lhs = ctx.getChild(0).getText();
+        String rhs = ctx.getChild(2).getText();
+
         // converts to postfix
         ShuntingYardConverter converter = new ShuntingYardConverter();
-        ArrayList<String> rpn_list = converter.expressionParse(ctx.getChild(2).getText()); 
+        ArrayList<String> rpn_list = converter.expressionParse(rhs); 
 
         // creates abstract syntax tree from list
         RPNTree rpn_tree = new RPNTree();
         rpn_tree = rpn_tree.parseRPNList(rpn_list); 
        
         IRList ir = new IRList();
-        if(varTypeTable.get(ctx.getChild(0).getText()).equals("INT")) {
+        if(varTypeTable.get(lhs).equals("INT")) {
             ir = rpn_tree.rhsIRGen(ir, rpn_tree);
             if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
                 rpn_tree.regnum++;
-                ir.appendNode("STOREI", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+                if(rhs.matches("^\\d+(?:\\.\\d+)?$")) { // a := 1
+                    ir.appendNode("STOREI", rhs, "", "$T" + Integer.toString(rpn_tree.regnum));
+                }
+                else { // a := b
+                    ir.appendNode("STOREI", getScopeReg(rhs), "", "$T" + Integer.toString(rpn_tree.regnum));
+                }
                 regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
             }
-            ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
+            ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", getScopeReg(lhs));
             regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
-            regTypeTable.put(ctx.getChild(0).getText(), "INT");
+            regTypeTable.put(lhs, "INT");
+            regTypeTable.put(getScopeReg(lhs), "INT");
         }
         else {
             ir = rpn_tree.rhsIRGenFloat(ir, rpn_tree);
             if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
                 rpn_tree.regnum++;
-                ir.appendNode("STOREF", ctx.getChild(2).getText(), "", "$T" + Integer.toString(rpn_tree.regnum));
+                if(rhs.matches("^\\d+(?:\\.\\d+)?$")) { // a := 1
+                    ir.appendNode("STOREF", rhs, "", "$T" + Integer.toString(rpn_tree.regnum));
+                }
+                else { // a := b
+                    ir.appendNode("STOREF", getScopeReg(rhs), "", "$T" + Integer.toString(rpn_tree.regnum));
+                }
                 regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "FLOAT");
             }
-            ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", ctx.getChild(0).getText());
-                regTypeTable.put(ctx.getChild(0).getText(), "FLOAT");
+            ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", getScopeReg(lhs));
+            regTypeTable.put(lhs, "FLOAT");
+            regTypeTable.put(getScopeReg(lhs), "FLOAT");
         }
-        // for(IRNode inode : ir.getList()) {
-        //     System.out.println(inode.getOpcode() + " " + inode.getOperand1() 
-        //         + " " + inode.getOperand2() + " " + inode.getResult());
-        // }
         allIRLists.add(ir);
     }
 
+    private String getScopeReg(String value) {
+        for(int i = this.allSymbolTables.size()-1; i >= 0; --i) {
+            SymbolTable currTable = this.allSymbolTables.get(i);
+            String lookup = currTable.getScopeRegByVarName(value);
+            if(!lookup.equals("")) 
+                return lookup;
+            if(!currTable.scope.contains("BLOCK") && !currTable.scope.equals("GLOBAL")) {
+                i = 1; // move to GLOBAL
+            }
+        }
+        return "garbage";
+    }
+
+    // @Override
+    // public void enterWrite_stmt(MicroParser.Write_stmtContext ctx) {
+    //     IRList ir = new IRList();
+    //     if(varTypeTable.get(ctx.getChild(2).getText()).equals("INT")) {
+    //         ir.appendNode("WRITEI", ctx.getChild(2).getText(), "", "");
+    //     }
+    //     else {
+    //         ir.appendNode("WRITEF", ctx.getChild(2).getText(), "", "");
+    //     }
+    //     allIRLists.add(ir);
+    // }
+
     @Override
-    public void enterWrite_stmt(MicroParser.Write_stmtContext ctx) {
+    public void enterReturn_stmt(MicroParser.Return_stmtContext ctx) {
+        String return_val = ctx.getChild(1).getText();
         IRList ir = new IRList();
-        if(varTypeTable.get(ctx.getChild(2).getText()).equals("INT")) {
-            ir.appendNode("WRITEI", ctx.getChild(2).getText(), "", "");
+        if(return_val.matches("^\\d+$")) { // RETURN 0;
+            RPNTree.regnum++;
+            String temp_reg = "$T" + Integer.toString(RPNTree.regnum);
+            ir.appendNode("STOREI", return_val, "", temp_reg);
+            ir.appendNode("STOREI", temp_reg, "", "$R");
         }
-        else {
-            ir.appendNode("WRITEF", ctx.getChild(2).getText(), "", "");
+        else if(return_val.matches("^\\d+(?:\\.\\d+)?$")) { // RETURN 0.5;
+            RPNTree.regnum++;
+            ir.appendNode("STOREF", return_val, "", "$T" + Integer.toString(RPNTree.regnum));
+            ir.appendNode("STOREF", return_val, "", "$R");
         }
-        // System.out.println(ir.getNode().getOpcode() + " " + ir.getNode().getOperand1() 
-        //         + " " + ir.getNode().getOperand2() + " " + ir.getNode().getResult());
+        else { // RETURN a;
+            if(varTypeTable.get(return_val).equals("INT")) {
+
+            }
+            else {
+
+            }
+        }
+        ir.appendNode("RET", "", "", "");
         allIRLists.add(ir);
     }
     
