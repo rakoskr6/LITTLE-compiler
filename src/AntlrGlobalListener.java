@@ -148,32 +148,40 @@ class AntlrGlobalListener extends MicroBaseListener {
                     // System.out.println(res);
                 }
                 if(op.equals("STOREI")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                 }
                 else if(op.equals("STOREF")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                 }
                 else if(op.equals("ADDI")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("addi " + opd2 + " " + res);
                 }
                 else if(op.equals("ADDF")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("addr " + opd2 + " " + res);
                 }
                 else if(op.equals("SUBI")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("subi " + opd2 + " " + res);
                 }
                 else if(op.equals("SUBF")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("subr " + opd2 + " " + res);
                 }
                 else if(op.equals("MULTI")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("muli " + opd2 + " " + res);
                 }
                 else if(op.equals("MULTF")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("mulr " + opd2 + " " + res);
                 }
@@ -182,16 +190,20 @@ class AntlrGlobalListener extends MicroBaseListener {
                     System.out.println("divi " + opd2 + " " + res);
                 }
                 else if(op.equals("DIVF")) {
+                    // To implement actual addresses
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divr " + opd2 + " " + res);
                 }
                 else if(op.equals("WRITEI")) {
+                    // To implement actual addresses
                     System.out.println("sys writei " + opd1);
                 }
                 else if(op.equals("WRITEF")) {
+                    // To implement actual addresses
                     System.out.println("sys writer " + opd1);
                 }
                 else if(op.equals("READI")) {
+                    // To implement actual addresses
                     System.out.println("sys readi " + res);
                 }
                 else if(op.equals("LABEL")) {
@@ -249,12 +261,29 @@ class AntlrGlobalListener extends MicroBaseListener {
                     System.out.println("ret");
 
                 }
+                else if (op.equals("WRITES")) {
+                    System.out.println("sys writes " + opd1);
+                }
+                else if (op.equals("READF")) {
+                    System.out.println("sys readr " + res);
+                }
+                else if (op.equals("JSR")) {
+                    System.out.println("jsr " + opd1);
+                }
+                else if (op.equals("POP")) {
+                    System.out.println("POP TO BE IMPLEMENTED");
+                }
+                else if (op.equals("PUSH")) {
+                    System.out.println("PUSH TO BE IMPLEMENTED");
+                }
+
                 else {
                     System.out.println("Unsupported operation: " + op);
                 }
+
             }
         }
-        System.out.println("sys halt");
+        System.out.println("end");
         
         
         
