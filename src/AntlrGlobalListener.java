@@ -23,7 +23,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     private boolean funcReturnsInt; // true = INT, false = FLOAT
 
     // debug
-    public boolean debugST = false;
+    public boolean debugST = true;
 
     public AntlrGlobalListener() {
         this.blockCounter = 1;
@@ -91,15 +91,21 @@ class AntlrGlobalListener extends MicroBaseListener {
 
        
         
-        /*
+        
         System.out.println(";tiny code");
 
         for(int i = 0; i < this.allSymbolTables.get(0).objectList.size(); ++i) {
-            System.out.println("var " + this.allSymbolTables.get(0).objectList.get(i).varName);
+            if (this.allSymbolTables.get(0).objectList.get(i).varType == "STRING") {
+                System.out.print("str ");
+            }
+            else {
+                System.out.print(this.allSymbolTables.get(0).objectList.get(i).varType + " ");
+            }
+            System.out.println(this.allSymbolTables.get(0).objectList.get(i).varName + " " + this.allSymbolTables.get(0).objectList.get(i).varValue);
         }
         // Print this every time
         System.out.println("push \npush r0 \npush r1 \npush r2 \npush r3 \njsr main\nsys halt");
-
+        String scope = "global";
         for(IRList ilist : allIRLists) {
            
             for(IRNode inode : ilist.getList()) {
@@ -189,7 +195,8 @@ class AntlrGlobalListener extends MicroBaseListener {
                     System.out.println("sys readi " + res);
                 }
                 else if(op.equals("LABEL")) {
-                    System.out.println("label " + res);
+                    System.out.println("label " + opd1);
+                    scope = opd1;
                 }
                 else if(op.equals("JUMP")) {
                     System.out.println("jmp " + res);
@@ -227,7 +234,20 @@ class AntlrGlobalListener extends MicroBaseListener {
                 
                 else if(op.equals("LINK")) {
                     int numVar = 0;// make equal to #variables in function
-                    System.out.println("link" + numVar);
+
+                    for (SymbolTable curSymbolTable : allSymbolTables) {
+                        if (curSymbolTable.scope == scope) {
+                            numVar = curSymbolTable.getNumVarsInScope();
+                        }
+
+                    }
+
+                    System.out.println("link " + numVar);
+                }
+                else if(op.equals("RET")) {
+                    System.out.println("unlnk");
+                    System.out.println("ret");
+
                 }
                 else {
                     System.out.println("Unsupported operation: " + op);
@@ -235,7 +255,7 @@ class AntlrGlobalListener extends MicroBaseListener {
             }
         }
         System.out.println("sys halt");
-        */
+        
         
         
     }
