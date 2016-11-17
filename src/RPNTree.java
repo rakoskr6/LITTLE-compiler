@@ -66,11 +66,13 @@ public class RPNTree {
                 regnum++;
                 curr_list.appendNode(new IRNode("STOREI", opd1, "", "$T"+Integer.toString(regnum)));
                 root.left_child.setValue("$T"+Integer.toString(regnum));
+                opd1 = "$T"+Integer.toString(regnum);
             }
             if(opd2.matches("^\\d+(?:\\.\\d+)?$")) {
                 regnum++;
                 curr_list.appendNode(new IRNode("STOREI", opd2, "", "$T"+Integer.toString(regnum)));
                 root.right_child.setValue("$T"+Integer.toString(regnum));
+                opd2 = "$T"+Integer.toString(regnum);
             }
             SymbolTable st = AntlrGlobalListener.allSymbolTables.get(AntlrGlobalListener.allSymbolTables.size()-1);
             if(st.scope.equals("GLOBAL") || (opd1.contains("$T") && opd2.contains("$T"))) {
