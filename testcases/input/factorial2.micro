@@ -27,6 +27,8 @@ BEGIN
 			result := 1;
 		ELSIF(num >1)
 			  result := factorial(num); 
+	    ELSIF(TRUE)
+			  result := 0;
 		ENDIF
 		WRITE(result,eol);
 		RETURN 0;
