@@ -20,6 +20,8 @@ class AntlrGlobalListener extends MicroBaseListener {
     private Stack<String> labelStack = new Stack<String>();
     private Stack<String> exitStack = new Stack<String>();
 
+    private boolean funcReturnsInt; // true = INT, false = FLOAT
+
     // debug
     public boolean debugST = false;
 
@@ -244,7 +246,9 @@ class AntlrGlobalListener extends MicroBaseListener {
         String func_name = ctx.getChild(2).getText();
         SymbolTable func = new SymbolTable(func_name);
         this.allSymbolTables.add(func); 
-        // function superscope tables
+        
+        String ret_type = ctx.getChild(1).getText();
+        funcReturnsInt = (ret_type.equals("INT"));
 
         paramCounter = 1;
         localCounter = 1;
@@ -421,11 +425,11 @@ class AntlrGlobalListener extends MicroBaseListener {
         ArrayList<String> tokenized_list = tokenizeConditional(expr);
         RPNTree.regnum++;
         if(varTypeTable.get(tokenized_list.get(0)).equals("INT")) {
-            ir.appendNode("STOREI", tokenized_list.get(2), "", "$T" + Integer.toString(RPNTree.regnum));
+            ir.appendNode("STOREI", getScopeReg(tokenized_list.get(2)), "", "$T" + Integer.toString(RPNTree.regnum));
             regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
         }
         else {
-            ir.appendNode("STOREF", tokenized_list.get(2), "", "$T" + Integer.toString(RPNTree.regnum));
+            ir.appendNode("STOREF", getScopeReg(tokenized_list.get(2)), "", "$T" + Integer.toString(RPNTree.regnum));
             regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "FLOAT");
         }
         String logic_op = logicOpTable.get(tokenized_list.get(1));
@@ -519,11 +523,50 @@ class AntlrGlobalListener extends MicroBaseListener {
 
         if(rhs.matches("^\\w+\\(.*\\)$")) { // function...
             IRList ir = new IRList();
-            ir.appendNode("PUSH", "", "", "");
             String function_name = rhs.split("\\(")[0];
             String[] arg_list = rhs.split("\\(")[1].split("\\)")[0].split(",");
             for(String arg : arg_list) {
-                ir.appendNode("PUSH", getScopeReg(arg), "", "");
+                // converts to postfix
+                ShuntingYardConverter converter = new ShuntingYardConverter();
+                ArrayList<String> rpn_list = converter.expressionParse(arg); 
+
+                // creates abstract syntax tree from list
+                RPNTree rpn_tree = new RPNTree();
+                rpn_tree = rpn_tree.parseRPNList(rpn_list); 
+       
+                if(varTypeTable.get(lhs).equals("INT")) { // this is actually untrue - we /should/ look at arg types, not return type
+                    ir = rpn_tree.rhsIRGen(ir, rpn_tree);
+                    if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+                        if(arg.matches("^\\d+(?:\\.\\d+)?$")) { 
+                            rpn_tree.regnum++;
+                            ir.appendNode("STOREI", arg, "", "$T" + Integer.toString(rpn_tree.regnum));
+                        }
+                        else { // a := b
+                // ir.appendNode("DEBUG", "WE'RE", "IN", "HERE");
+                            // ir.appendNode("STOREI", getScopeReg(arg), "", "$T" + Integer.toString(rpn_tree.regnum));
+                        }
+                    }
+                }
+                else {
+                    ir = rpn_tree.rhsIRGenFloat(ir, rpn_tree);
+                    if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+                        if(rhs.matches("^\\d+(?:\\.\\d+)?$")) { // a := 1
+                            rpn_tree.regnum++;
+                            ir.appendNode("STOREF", arg, "", "$T" + Integer.toString(rpn_tree.regnum));
+                        }
+                        else { // a := b
+                            // ir.appendNode("STOREF", getScopeReg(arg), "", "$T" + Integer.toString(rpn_tree.regnum));
+                        }
+                    }
+                }
+            }
+            ir.appendNode("PUSH", "", "", "");
+            for(String arg : arg_list) {
+                String scopeReg = getScopeReg(arg);
+                if(scopeReg.equals("not present"))
+                    ir.appendNode("PUSH", "$T" + Integer.toString(RPNTree.regnum), "", "");
+                else
+                    ir.appendNode("PUSH", getScopeReg(arg), "", "");
             }
             ir.appendNode("JSR", function_name, "", "");
             for(String arg : arg_list) {
@@ -532,9 +575,9 @@ class AntlrGlobalListener extends MicroBaseListener {
             RPNTree.regnum++;
             ir.appendNode("POP", "$T" + Integer.toString(RPNTree.regnum), "", "");
             if(varTypeTable.get(lhs).equals("INT"))
-                ir.appendNode("STOREI", "$T" + Integer.toString(RPNTree.regnum), "", "");
+                ir.appendNode("STOREI", "$T" + Integer.toString(RPNTree.regnum), "", getScopeReg(lhs));
             else
-                ir.appendNode("STOREF", "$T" + Integer.toString(RPNTree.regnum), "", "");
+                ir.appendNode("STOREF", "$T" + Integer.toString(RPNTree.regnum), "", getScopeReg(lhs));
 
             allIRLists.add(ir);
         }
@@ -638,14 +681,37 @@ class AntlrGlobalListener extends MicroBaseListener {
             ir.appendNode("STOREF", return_val, "", "$R");
         }
         else { // RETURN a;
-            if(varTypeTable.get(return_val).equals("INT")) {
-                ir.appendNode("STOREI", getScopeReg(return_val), "", "R");
+            // converts to postfix
+            ShuntingYardConverter converter = new ShuntingYardConverter();
+            ArrayList<String> rpn_list = converter.expressionParse(return_val); 
+
+            // creates abstract syntax tree from list
+            RPNTree rpn_tree = new RPNTree();
+            rpn_tree = rpn_tree.parseRPNList(rpn_list); 
+           
+            if(funcReturnsInt) {
+                ir = rpn_tree.rhsIRGen(ir, rpn_tree);
+                if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+                    rpn_tree.regnum++;
+                    ir.appendNode("STOREI", getScopeReg(return_val), "", "$T" + Integer.toString(rpn_tree.regnum));
+                }
+                ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", "$R");
             }
             else {
-                ir.appendNode("STOREF", getScopeReg(return_val), "", "R");
+                ir = rpn_tree.rhsIRGenFloat(ir, rpn_tree);
+                if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
+                    rpn_tree.regnum++;
+                    ir.appendNode("STOREF", getScopeReg(return_val), "", "$T" + Integer.toString(rpn_tree.regnum));
+                }
+                ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", "$R");
             }
         }
         ir.appendNode("RET", "", "", "");
         allIRLists.add(ir);
     }
-}
+}            // if(varTypeTable.get(return_val).equals("INT")) {
+            //     ir.appendNode("STOREI", getScopeReg(return_val), "", "R");
+            // }
+            // else {
+            //     ir.appendNode("STOREF", getScopeReg(return_val), "", "R");
+            // }
