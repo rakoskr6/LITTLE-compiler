@@ -20,9 +20,9 @@
 ;READF $L1
 ;WRITES second
 ;READF $L2
+;PUSH 
 ;WRITES third
 ;READF $L3
-;PUSH 
 ;PUSH $L1
 ;PUSH $L2
 ;JSR multiply

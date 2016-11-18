@@ -23,7 +23,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     private boolean funcReturnsInt; // true = INT, false = FLOAT
 
     // debug
-    public boolean debugST = true;
+    public boolean debugST = false;
 
     public AntlrGlobalListener() {
         this.blockCounter = 1;
@@ -923,38 +923,374 @@ class AntlrGlobalListener extends MicroBaseListener {
                     System.out.println("sys readi " + res);
                 }
                 else if(op.equals("LABEL")) {
-                    System.out.println("label " + opd1);
+                    if (!opd1.isEmpty()) {
+                        System.out.println("label " + opd1);
+                    } 
+                    else if (!opd2.isEmpty()) {
+                        System.out.println("label " + opd2);
+                    }
+                    else {
+                        System.out.println("label " + res);
+
+                    }
+                    
+
                     scope = opd1;
                 }
                 else if(op.equals("JUMP")) {
                     System.out.println("jmp " + res);
                 }
                 else if(op.equals("LE")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jle " + res);
                 }
                 else if(op.equals("GE")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
+
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jge " + res);
                 }
                 else if(op.equals("LT")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jlt " + res);
                 }
                 else if(op.equals("GT")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jgt " + res);
                 }
                 else if(op.equals("EQ")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jeq " + res);
                 }
                 else if(op.equals("NE")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     if(is_float) { System.out.println("cmpr " + opd1 + " " + opd2); }
                     else { System.out.println("cmpi " + opd1 + " " + opd2); }
                     System.out.println("jne " + res);
@@ -1146,14 +1482,122 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i3 = 6 + numParams;
                         res = "$" + i3;
                     }
-
+                    System.out.println("push r0\npush r1\npush r2\npush r3");
                     System.out.println("jsr " + opd1);
+                    System.out.println("pop r3\npop r2\npop r1\npop r0");
+
                 }
                 else if (op.equals("POP")) {
-                    System.out.println("POP TO BE IMPLEMENTED");
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+                    System.out.println("pop " + opd1);
                 }
                 else if (op.equals("PUSH")) {
-                    System.out.println("PUSH TO BE IMPLEMENTED");
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+                    System.out.println("push " + opd1);
                 }
 
                 else {
