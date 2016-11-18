@@ -106,6 +106,8 @@ class AntlrGlobalListener extends MicroBaseListener {
         // Print this every time
         System.out.println("push \npush r0 \npush r1 \npush r2 \npush r3 \njsr main\nsys halt");
         String scope = "global";
+        SymbolTable currSymTable = this.allSymbolTables.get(0);
+        int numParams = 0;
         for(IRList ilist : allIRLists) {
            
             for(IRNode inode : ilist.getList()) {
@@ -148,58 +150,259 @@ class AntlrGlobalListener extends MicroBaseListener {
                     // System.out.println(res);
                 }
                 if(op.equals("STOREI")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
+
                     System.out.println("move " + opd1 + " " + res);
                 }
                 else if(op.equals("STOREF")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
                     System.out.println("move " + opd1 + " " + res);
                 }
                 else if(op.equals("ADDI")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("addi " + opd2 + " " + res);
                 }
                 else if(op.equals("ADDF")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
+                    
+                    //System.out.println("\n" + opd1 + ": " + i1 + ", " + opd2 + ": " + i2);
+                    
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("addr " + opd2 + " " + res);
                 }
                 else if(op.equals("SUBI")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("subi " + opd2 + " " + res);
                 }
                 else if(op.equals("SUBF")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("subr " + opd2 + " " + res);
                 }
                 else if(op.equals("MULTI")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("muli " + opd2 + " " + res);
                 }
+
                 else if(op.equals("MULTF")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("mulr " + opd2 + " " + res);
                 }
                 else if(op.equals("DIVI")) {
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divi " + opd2 + " " + res);
                 }
                 else if(op.equals("DIVF")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
+
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divr " + opd2 + " " + res);
                 }
                 else if(op.equals("WRITEI")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+
+
                     System.out.println("sys writei " + opd1);
                 }
                 else if(op.equals("WRITEF")) {
-                    // To implement actual addresses
+                    String s1 = opd1, s2 = opd2;
+                    Integer i1 = 0, i2 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    
                     System.out.println("sys writer " + opd1);
                 }
                 else if(op.equals("READI")) {
@@ -247,11 +450,12 @@ class AntlrGlobalListener extends MicroBaseListener {
                 else if(op.equals("LINK")) {
                     int numVar = 0;// make equal to #variables in function
 
-                    for (SymbolTable curSymbolTable : allSymbolTables) {
-                        if (curSymbolTable.scope == scope) {
-                            numVar = curSymbolTable.getNumVarsInScope();
+                    for (SymbolTable sym : allSymbolTables) {
+                        if (sym.scope == scope) {
+                            numVar = sym.getNumVarsInScope();
+                            currSymTable = sym;
+                            numParams = sym.getNumParamsInScope();
                         }
-
                     }
 
                     System.out.println("link " + numVar);
