@@ -149,15 +149,28 @@ class AntlrGlobalListener extends MicroBaseListener {
                     res = "" + "r" + Integer.toString(val-1);
                     // System.out.println(res);
                 }
+
+                //    System.out.println(op + ", " + opd1 + ", " + opd2 + ", " + res);
+                
                 if(op.equals("STOREI")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -166,19 +179,58 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
 
 
                     System.out.println("move " + opd1 + " " + res);
                 }
                 else if(op.equals("STOREF")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
-                    
+                   String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+
+
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -187,18 +239,58 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
+
+
 
                     System.out.println("move " + opd1 + " " + res);
                 }
                 else if(op.equals("ADDI")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                   String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -207,13 +299,41 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
 
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("addi " + opd2 + " " + res);
                 }
                 else if(op.equals("ADDF")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
@@ -221,12 +341,49 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
                     }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
 
                     if (s2.startsWith("$P")) {
                         s2 = s2.replace("$P","");
                         i2 = Integer.parseInt(s2);
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
                     }
 
                     
@@ -236,8 +393,8 @@ class AntlrGlobalListener extends MicroBaseListener {
                     System.out.println("addr " + opd2 + " " + res);
                 }
                 else if(op.equals("SUBI")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
@@ -245,26 +402,73 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
                     }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
 
                     if (s2.startsWith("$P")) {
                         s2 = s2.replace("$P","");
                         i2 = Integer.parseInt(s2);
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
                     }
 
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("subi " + opd2 + " " + res);
                 }
                 else if(op.equals("SUBF")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
-                    if (s1.startsWith("$P")) {
+                   if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -272,6 +476,33 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = Integer.parseInt(s2);
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
                     }
 
 
@@ -279,8 +510,8 @@ class AntlrGlobalListener extends MicroBaseListener {
                     System.out.println("subr " + opd2 + " " + res);
                 }
                 else if(op.equals("MULTI")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
@@ -288,12 +519,49 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
                     }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
 
                     if (s2.startsWith("$P")) {
                         s2 = s2.replace("$P","");
                         i2 = Integer.parseInt(s2);
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
                     }
 
                     System.out.println("move " + opd1 + " " + res);
@@ -301,14 +569,24 @@ class AntlrGlobalListener extends MicroBaseListener {
                 }
 
                 else if(op.equals("MULTF")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -317,19 +595,57 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
 
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("mulr " + opd2 + " " + res);
                 }
                 else if(op.equals("DIVI")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
-                    if (s1.startsWith("$P")) {
+                   if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -338,19 +654,57 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
 
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divi " + opd2 + " " + res);
                 }
                 else if(op.equals("DIVF")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -359,20 +713,58 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
 
 
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divr " + opd2 + " " + res);
                 }
                 else if(op.equals("WRITEI")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
-                    if (s1.startsWith("$P")) {
+                   if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -381,19 +773,57 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
 
 
                     System.out.println("sys writei " + opd1);
                 }
                 else if(op.equals("WRITEF")) {
-                    String s1 = opd1, s2 = opd2;
-                    Integer i1 = 0, i2 = 0;
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
                     
                     if (s1.startsWith("$P")) {
                         s1 = s1.replace("$P","");
                         i1 = Integer.parseInt(s1);
                         i1 = -i1 + numParams + 6;
                         opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
                     }
 
                     if (s2.startsWith("$P")) {
@@ -402,11 +832,94 @@ class AntlrGlobalListener extends MicroBaseListener {
                         i2 = -i2 + numParams + 6;
                         opd2 = "$"  + i2;
                     }
-                    
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
+
                     System.out.println("sys writer " + opd1);
                 }
                 else if(op.equals("READI")) {
-                    // To implement actual addresses
+                    
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
+
                     System.out.println("sys readi " + res);
                 }
                 else if(op.equals("LABEL")) {
@@ -466,12 +979,174 @@ class AntlrGlobalListener extends MicroBaseListener {
 
                 }
                 else if (op.equals("WRITES")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     System.out.println("sys writes " + opd1);
                 }
                 else if (op.equals("READF")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     System.out.println("sys readr " + res);
                 }
                 else if (op.equals("JSR")) {
+                    String s1 = opd1, s2 = opd2, s3 = res;
+                    Integer i1 = 0, i2 = 0, i3 = 0;
+                    
+                    if (s1.startsWith("$P")) {
+                        s1 = s1.replace("$P","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1 + numParams + 6;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$L")) {
+                        s1 = s1.replace("$L","");
+                        i1 = Integer.parseInt(s1);
+                        i1 = -i1;
+                        opd1 = "$"  + i1;
+                    }
+                    else if (s1.startsWith("$R")) {
+                        i1 = 6 + numParams;
+                        opd1 = "$" + i1;
+                    }
+
+                    if (s2.startsWith("$P")) {
+                        s2 = s2.replace("$P","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2 + numParams + 6;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$L")) {
+                        s2 = s2.replace("$L","");
+                        i2 = Integer.parseInt(s2);
+                        i2 = -i2;
+                        opd2 = "$"  + i2;
+                    }
+                    else if (s2.startsWith("$R")) {
+                        i2 = 6 + numParams;
+                        opd2 = "$" + i2;
+                    }
+
+                    if (s3.startsWith("$P")) {
+                        s3 = s3.replace("$P","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3 + numParams + 6;
+                        opd2 = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$L")) {
+                        s3 = s3.replace("$L","");
+                        i3 = Integer.parseInt(s3);
+                        i3 = -i3;
+                        res = "$"  + i3;
+                    }
+                    else if (s3.startsWith("$R")) {
+                        i3 = 6 + numParams;
+                        res = "$" + i3;
+                    }
+
                     System.out.println("jsr " + opd1);
                 }
                 else if (op.equals("POP")) {
