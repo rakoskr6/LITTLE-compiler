@@ -12,6 +12,8 @@ class AntlrGlobalListener extends MicroBaseListener {
     private List<IRList> allIRLists = new ArrayList<IRList>();
     private Hashtable<String,String> varTypeTable = new Hashtable<String,String>();
     private Hashtable<String,String> regTypeTable = new Hashtable<String,String>();
+    public HashSet<String> leaderSet = new HashSet<String>();
+    public Hashtable<String,Integer> labelTable = new Hashtable<String,Integer>();
 
     // if blocks
     private int labelCounter;
@@ -80,18 +82,12 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
 
         System.out.println(";IR code");
-        for(IRList ilist : allIRLists) {
-            for(IRNode inode : ilist.getList()) {
-                System.out.println(";" + inode.getOpcode() + " " + inode.getOperand1() 
-                    + " " + inode.getOperand2() + " " + inode.getResult());
-                if(inode.getOpcode().equals("RET"))
-                    System.out.println();
-            }
-        }
+        // printIRLists(false);
 
-       
-        
-        
+        numericizeProgram();
+        // partitioningAlgorithm();
+
+        /*
         System.out.println(";tiny code");
 
         for(int i = 0; i < this.allSymbolTables.get(0).objectList.size(); ++i) {
@@ -1606,10 +1602,63 @@ class AntlrGlobalListener extends MicroBaseListener {
 
             }
         }
+        */
         System.out.println("end");
-        
-        
-        
+    }
+
+    public void partitioningAlgorithm() {
+        // create a set of leaders
+        for(IRList ilist : allIRLists) {
+            for(IRNode inode : ilist.getList()) {
+                String irstring = inode.getIRString();
+                if(irstring.matches("LABEL\\s+[A-Za-z][A-Za-z0-9]{0,30}$") && !irstring.matches("LABEL[ ]+label[0-9]+\\s+$")) {
+                    leaderSet.clear();
+                    leaderSet.add(irstring);
+                }
+                else {
+
+                }
+            }
+        }
+    }
+
+    public void numericizeProgram() {
+        int statementNum = 1;
+        for(int i = 0; i < allIRLists.size(); ++i) {
+            IRList irlist = allIRLists.get(i);
+            for(int j = 0; j < irlist.getSize(); ++j) {
+                // assign statement numbers
+                IRNode inode = irlist.getNode(j);
+                inode.setStatementNum(statementNum);
+                irlist.setNode(j, inode);
+                // append labels to numeric association table
+                String irstring = inode.getIRString();
+                if(irstring.matches("LABEL\\s+label[0-9]+$")) {
+                    labelTable.put(inode.getResult(), statementNum);
+                }
+                ++statementNum;
+            }
+            allIRLists.set(i, irlist);
+        }
+        System.out.println(labelTable);
+        printIRLists(true);
+    }
+
+    public void printIRLists(boolean linumMode) {
+        for(IRList ilist : allIRLists) {
+            for(IRNode inode : ilist.getList()) {
+                if(linumMode) {
+                    System.out.println(";" + Integer.toString(inode.getStatementNum()) + ": " + inode.getOpcode() + " " + inode.getOperand1() 
+                        + " " + inode.getOperand2() + " " + inode.getResult());
+                }
+                else {
+                    System.out.println(";" + inode.getOpcode() + " " + inode.getOperand1() 
+                        + " " + inode.getOperand2() + " " + inode.getResult());
+                }
+                if(inode.getOpcode().equals("RET"))
+                    System.out.println();
+            }
+        }
     }
 
     @Override 
@@ -1627,7 +1676,8 @@ class AntlrGlobalListener extends MicroBaseListener {
         RPNTree.regnum = 0;
 
         IRList ir = new IRList();
-        ir.appendNode("LABEL", func_name, "", "");
+        // ir.appendNode("LABEL", func_name, "", "");
+        ir.appendNode("LABEL", "", "", func_name);
         ir.appendNode("LINK", "", "", "");
 
         allIRLists.add(ir);
@@ -1975,7 +2025,12 @@ class AntlrGlobalListener extends MicroBaseListener {
                     }
                     regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
                 }
-                ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", getScopeReg(lhs));
+                if(getScopeReg(lhs).equals("GLOB")) {
+                    ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", lhs);
+                }
+                else {
+                    ir.appendNode("STOREI", "$T"+Integer.toString(rpn_tree.regnum), "", getScopeReg(lhs));
+                }
                 regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
                 regTypeTable.put(lhs, "INT");
                 regTypeTable.put(getScopeReg(lhs), "INT");
@@ -1992,7 +2047,12 @@ class AntlrGlobalListener extends MicroBaseListener {
                     }
                     regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "FLOAT");
                 }
-                ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", getScopeReg(lhs));
+                if(getScopeReg(lhs).equals("GLOB")) {
+                    ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", lhs);
+                }
+                else {
+                    ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", getScopeReg(lhs));
+                }
                 regTypeTable.put(lhs, "FLOAT");
                 regTypeTable.put(getScopeReg(lhs), "FLOAT");
             }
