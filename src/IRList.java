@@ -21,11 +21,18 @@ public class IRList {
     public IRNode getNode(int index) {
         return this.listIR.get(index);
     }
+    public Integer getSize() {
+        return this.listIR.size();
+    }
 
     public void appendNode(IRNode node) {
         this.listIR.add(node);
     }
     public void appendNode(String opcode, String operand1, String operand2, String result) {
         this.listIR.add(new IRNode(opcode, operand1, operand2, result));
+    }
+
+    public void setNode(int index, IRNode inode) {
+        this.listIR.set(index, inode);
     }
 }
