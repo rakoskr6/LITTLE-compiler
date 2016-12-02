@@ -13,12 +13,21 @@ public class IRNode {
     private String operand1;
     private String operand2;
     private String result;
+    private int statementNum;
 
     public IRNode (String opcode, String operand1, String operand2, String result) {
         this.opcode   = opcode;
         this.operand1 = operand1;
         this.operand2 = operand2;
         this.result   = result;
+        this.statementNum = 0;
+    }
+
+    public void printIRNode() {
+        System.out.println("opcode: " + this.opcode + ";   \toperand1: " + this.operand1 + ";      \toperand2: " + this.operand2 + ";     \tresult: " + this.result);
+    }
+    public String getIRString() {
+        return this.opcode + " " + this.operand1 + " " + this.operand2 + " " + this.result;
     }
 
     public String getOpcode() {
@@ -33,6 +42,9 @@ public class IRNode {
     public String getResult() {
         return this.result;
     }
+    public Integer getStatementNum() {
+        return this.statementNum;
+    }
 
     public void setOpcode(String opcode) {
         this.opcode = opcode;
@@ -45,5 +57,8 @@ public class IRNode {
     }
     public void setResult(String result) {
         this.result = result;
+    }
+    public void setStatementNum(Integer statementnum) {
+        this.statementNum = statementnum;
     }
 }
