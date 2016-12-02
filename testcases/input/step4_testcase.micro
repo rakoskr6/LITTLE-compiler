@@ -1,0 +1,29 @@
+PROGRAM step4
+BEGIN
+
+	INT a, b, i, p;
+
+	FUNCTION VOID main()
+	BEGIN
+
+		i := 0;
+		a := 0;
+		b := 0;
+
+		DO
+			READ (p);
+			
+			IF (p > 10) 
+				a := a + 1;
+			ELSIF (TRUE)
+      			b := b + 1;
+			ENDIF
+
+			i := i+1;
+
+		WHILE (i != 10);
+
+		WRITE (a);
+		WRITE (b);
+	END
+END
