@@ -83,10 +83,10 @@ public class RPNTree {
             }
             else {
                 if(!opd1.contains("$T")) {
-                    opd1 = getScopeReg(opd1);
+                    opd1 = (getScopeReg(opd1).equals("GLOB")) ? opd1 : getScopeReg(opd1);
                 }
                 if(!opd2.contains("$T")) {
-                    opd2 = getScopeReg(opd2);
+                    opd2 = (getScopeReg(opd2).equals("GLOB")) ? opd2 : getScopeReg(opd2);
                 }
                 regnum++;
                 curr_list.appendNode(new IRNode(opHash.get(operator), 
@@ -121,10 +121,10 @@ public class RPNTree {
             SymbolTable st = AntlrGlobalListener.allSymbolTables.get(AntlrGlobalListener.allSymbolTables.size()-1);
             if(!(st.scope.equals("GLOBAL") || (opd1.contains("$T") && opd2.contains("$T")))) {
                 if(!opd1.contains("$T")) {
-                    opd1 = getScopeReg(opd1);
+                    opd1 = (getScopeReg(opd1).equals("GLOB")) ? opd1 : getScopeReg(opd1);
                 }
                 if(!opd2.contains("$T")) {
-                    opd2 = getScopeReg(opd2);
+                    opd2 = (getScopeReg(opd2).equals("GLOB")) ? opd2 : getScopeReg(opd2);
                 }
             }
             regnum++;
