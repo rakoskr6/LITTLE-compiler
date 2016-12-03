@@ -4,10 +4,12 @@ import java.io.*;
 
 class ControlFlowGraph {
     private HashMap<IRNode,ControlFlowNode> graph = new HashMap<IRNode,ControlFlowNode>();
+    private ArrayList<IRNode> wlist = new ArrayList<IRNode>();
 
     public ControlFlowGraph(ArrayList<IRNode> worklist, IRList irlist, int endOfFuncNum) {
-        generateNodes(worklist, irlist, endOfFuncNum);
-        printControlFlowGraph();
+        this.wlist = new ArrayList<IRNode>(worklist);
+        generateNodes(new ArrayList<IRNode>(worklist), irlist, endOfFuncNum);
+        constructEdges(worklist);
     }
 
     private void generateNodes(ArrayList<IRNode> worklist, IRList irlist, int endOfFuncNum) {
@@ -37,15 +39,43 @@ class ControlFlowGraph {
         return statementList;
     }
 
-    public void printControlFlowGraph() {
-        System.out.println("Printing control flow graph: ");
-        for (Map.Entry<IRNode, ControlFlowNode> entry : graph.entrySet()) {
-            IRNode leaderNode = entry.getKey();
-            ControlFlowNode cfnode = entry.getValue();
-            System.out.println("Printing leader node:");
-            leaderNode.printIRNode();
-            cfnode.printControlFlowNode();
+    public void constructEdges(ArrayList<IRNode> worklist) {
+        for(int i = 0; i < worklist.size(); ++i) {
+            IRNode leaderNode = worklist.get(i);
+            ControlFlowNode cfn = graph.get(leaderNode);
+
+            IRNode lastStatement = cfn.getLastStatement();
+            if(lastStatement.getOpcode().matches("(LE|GE|LT|GT|EQ|NE)")) {
+                IRNode branch_target = new IRNode("LABEL","","",lastStatement.getResult());
+                branch_target.setStatementNum(AntlrGlobalListener.labelTable.get(lastStatement.getResult()));
+                cfn.appendAdjacency(graph.get(branch_target));
+                if(i+1 < worklist.size()) {
+                    IRNode next_cmd_target = worklist.get(i+1);
+                    cfn.appendAdjacency(graph.get(next_cmd_target));
+                }
+            }
+            else if(lastStatement.getOpcode().equals("JUMP")) {
+                IRNode jump_target = new IRNode("LABEL","","",lastStatement.getResult());
+                jump_target.setStatementNum(AntlrGlobalListener.labelTable.get(lastStatement.getResult()));
+                cfn.appendAdjacency(graph.get(jump_target));
+            }
+            else { // non-PC altering
+                if(i+1 < worklist.size()) {
+                    IRNode next_cmd_target = worklist.get(i+1);
+                    cfn.appendAdjacency(graph.get(next_cmd_target));
+                }
+            }
         }
+    }
+
+    public void printControlFlowGraph(boolean printEdges) {
+        System.out.println("Printing control flow graph: ");
+        for(int i = 0; i < wlist.size(); ++i) {
+            IRNode leaderNode = wlist.get(i);
+            ControlFlowNode cfn = graph.get(leaderNode);
+            cfn.printControlFlowNode(printEdges);
+        }
+        System.out.println();
         System.out.println();
     }
 }
