@@ -18,6 +18,10 @@ class ControlFlowNode {
         return this.statementList;
     }
 
+    public void setStatementList(ArrayList<IRNode> slist) {
+        this.statementList = slist;
+    }
+
     public void printControlFlowNode() {
         System.out.println("Printing control flow node:");
         for(IRNode statement : statementList) {
