@@ -24,7 +24,7 @@ public class IRNode {
     }
 
     public void printIRNode() {
-        System.out.println("opcode: " + this.opcode + ";\t\toperand1: " + this.operand1 + ";\t\toperand2: " + this.operand2 + ";\t\tresult: " + this.result + ";\t\tstatementNum: " + this.statementNum);
+        System.out.printf("%-20s %-20s %-20s %-20s %-20s\n", "opcode: " + this.opcode + ";", "operand1: " + this.operand1 + ";", "operand2: " + this.operand2 + ";", "result: " + this.result + ";", "statementNum: " + this.statementNum);
     }
     public String getIRString() {
         return this.opcode + " " + this.operand1 + " " + this.operand2 + " " + this.result;
