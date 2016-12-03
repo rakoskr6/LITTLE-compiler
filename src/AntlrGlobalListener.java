@@ -12,7 +12,7 @@ class AntlrGlobalListener extends MicroBaseListener {
     private List<IRList> allIRLists = new ArrayList<IRList>();
     private Hashtable<String,String> varTypeTable = new Hashtable<String,String>();
     private Hashtable<String,String> regTypeTable = new Hashtable<String,String>();
-    public HashSet<String> leaderSet = new HashSet<String>();
+    public HashSet<IRNode> leaderSet = new HashSet<IRNode>();
     public Hashtable<String,Integer> labelTable = new Hashtable<String,Integer>();
 
     // if blocks
@@ -84,8 +84,8 @@ class AntlrGlobalListener extends MicroBaseListener {
         System.out.println(";IR code");
         // printIRLists(false);
 
-        numericizeProgram();
-        // partitioningAlgorithm();
+        allIRLists = numericizeProgram();
+        partitioningAlgorithm();
 
         /*
         System.out.println(";tiny code");
@@ -1608,22 +1608,54 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     public void partitioningAlgorithm() {
         // create a set of leaders
-        for(IRList ilist : allIRLists) {
-            for(IRNode inode : ilist.getList()) {
+        for(int i = 0; i < allIRLists.size(); ++i) {
+            IRList ilist = allIRLists.get(i);
+            for(int j = 0; j < ilist.getSize(); ++j) {
+                IRNode inode = ilist.getNode(j);
                 String irstring = inode.getIRString();
-                if(irstring.matches("LABEL\\s+[A-Za-z][A-Za-z0-9]{0,30}$") && !irstring.matches("LABEL[ ]+label[0-9]+\\s+$")) {
+                if(irstring.matches("LABEL\\s+[A-Za-z][A-Za-z0-9]{0,30}$") && !irstring.matches("LABEL\\s+label[0-9]+$")) {
+                    printLeaderSet();
+                    ArrayList<IRNode> worklist = createWorklist();
+                    ControlFlowGraph cfg = new ControlFlowGraph(worklist);
                     leaderSet.clear();
-                    leaderSet.add(irstring);
+                    leaderSet.add(inode);
                 }
                 else {
-
+                    if(inode.getOpcode().matches("(LE|GE|LT|GT|EQ|NE)")) {
+                        // leaderSet.add(inode);
+                        IRNode branch_target = new IRNode("LABEL","","",inode.getResult());
+                        branch_target.setStatementNum(labelTable.get(inode.getResult()));
+                        IRNode next_cmd_target = ilist.getNode(j+1);
+                        leaderSet.add(branch_target);
+                        leaderSet.add(next_cmd_target);
+                    }
+                    else if(inode.getOpcode().equals("JUMP")) {
+                        IRNode jump_target = new IRNode("LABEL", "", "", inode.getResult());
+                        jump_target.setStatementNum(labelTable.get(inode.getResult()));
+                        leaderSet.add(jump_target);
+                    }
                 }
             }
+            printLeaderSet();
+            ArrayList<IRNode> worklist = createWorklist();
         }
     }
 
-    public void numericizeProgram() {
+    public ArrayList<IRNode> createWorklist() {
+        ArrayList<IRNode> worklist = new ArrayList<IRNode>(leaderSet);
+        Collections.sort(worklist, new Comparator<IRNode>() {
+            @Override
+            public int compare(IRNode inode1, IRNode inode2) {
+                return inode1.getStatementNum() - inode2.getStatementNum();
+            }
+        });
+        return worklist;
+    }
+
+    public List<IRList> numericizeProgram() {
         int statementNum = 1;
+        ArrayList<IRList> listofIRLists = new ArrayList<IRList>();
+        IRList flattenedIRList = new IRList();
         for(int i = 0; i < allIRLists.size(); ++i) {
             IRList irlist = allIRLists.get(i);
             for(int j = 0; j < irlist.getSize(); ++j) {
@@ -1637,11 +1669,13 @@ class AntlrGlobalListener extends MicroBaseListener {
                     labelTable.put(inode.getResult(), statementNum);
                 }
                 ++statementNum;
+                // flatten the IR list
+                flattenedIRList.appendNode(inode);
             }
             allIRLists.set(i, irlist);
         }
-        System.out.println(labelTable);
-        printIRLists(true);
+        listofIRLists.add(flattenedIRList);
+        return listofIRLists;
     }
 
     public void printIRLists(boolean linumMode) {
@@ -1658,6 +1692,15 @@ class AntlrGlobalListener extends MicroBaseListener {
                 if(inode.getOpcode().equals("RET"))
                     System.out.println();
             }
+        }
+    }
+
+    private void printLeaderSet() {
+        if(!leaderSet.isEmpty()) {
+            System.out.println("Printing leader set:");
+            for(IRNode inode : leaderSet)
+                inode.printIRNode();
+            System.out.println();
         }
     }
 
