@@ -13,7 +13,8 @@ class AntlrGlobalListener extends MicroBaseListener {
     private Hashtable<String,String> varTypeTable = new Hashtable<String,String>();
     private Hashtable<String,String> regTypeTable = new Hashtable<String,String>();
     public HashSet<IRNode> leaderSet = new HashSet<IRNode>();
-    public Hashtable<String,Integer> labelTable = new Hashtable<String,Integer>();
+    public static Hashtable<String,Integer> labelTable = new Hashtable<String,Integer>();
+    public List<ControlFlowGraph> cfgList = new ArrayList<ControlFlowGraph>();
 
     // if blocks
     private int labelCounter;
@@ -85,7 +86,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         // printIRLists(false);
 
         allIRLists = numericizeProgram();
-        partitioningAlgorithm();
+        constructCFGList();
 
         /*
         System.out.println(";tiny code");
@@ -1606,7 +1607,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         System.out.println("end");
     }
 
-    public void partitioningAlgorithm() {
+    public void constructCFGList() {
         // create a set of leaders
         for(int i = 0; i < allIRLists.size(); ++i) {
             IRList ilist = allIRLists.get(i);
@@ -1614,9 +1615,10 @@ class AntlrGlobalListener extends MicroBaseListener {
                 IRNode inode = ilist.getNode(j);
                 String irstring = inode.getIRString();
                 if(irstring.matches("LABEL\\s+[A-Za-z][A-Za-z0-9]{0,30}$") && !irstring.matches("LABEL\\s+label[0-9]+$")) {
-                    printLeaderSet();
+                    // printLeaderSet();
                     ArrayList<IRNode> worklist = createWorklist();
                     ControlFlowGraph cfg = new ControlFlowGraph(worklist, ilist, inode.getStatementNum());
+                    cfgList.add(cfg);
                     leaderSet.clear();
                     leaderSet.add(inode);
                 }
@@ -1636,9 +1638,13 @@ class AntlrGlobalListener extends MicroBaseListener {
                     }
                 }
             }
-            printLeaderSet();
+            // printLeaderSet();
+            IRNode inode = ilist.getNode(ilist.getSize()-1);
             ArrayList<IRNode> worklist = createWorklist();
+            ControlFlowGraph cfg = new ControlFlowGraph(worklist, ilist, inode.getStatementNum());
+            cfgList.add(cfg);
         }
+        printCFGList(true);
     }
 
     public ArrayList<IRNode> createWorklist() {
@@ -1702,6 +1708,11 @@ class AntlrGlobalListener extends MicroBaseListener {
                 inode.printIRNode();
             System.out.println();
         }
+    }
+
+    private void printCFGList(boolean printEdges) {
+        for(ControlFlowGraph cfg : cfgList)
+            cfg.printControlFlowGraph(printEdges);
     }
 
     @Override 
