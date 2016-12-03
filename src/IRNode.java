@@ -24,7 +24,7 @@ public class IRNode {
     }
 
     public void printIRNode() {
-        System.out.println("opcode: " + this.opcode + ";   \toperand1: " + this.operand1 + ";      \toperand2: " + this.operand2 + ";     \tresult: " + this.result);
+        System.out.println("opcode: " + this.opcode + ";\t\toperand1: " + this.operand1 + ";\t\toperand2: " + this.operand2 + ";\t\tresult: " + this.result + ";\t\tstatementNum: " + this.statementNum);
     }
     public String getIRString() {
         return this.opcode + " " + this.operand1 + " " + this.operand2 + " " + this.result;
@@ -60,5 +60,19 @@ public class IRNode {
     }
     public void setStatementNum(Integer statementnum) {
         this.statementNum = statementnum;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.opcode.hashCode() + this.operand1.hashCode() + this.operand2.hashCode() + this.result.hashCode() + this.statementNum;
+    }
+    @Override
+    public boolean equals(Object inode) {
+        if (this.hashCode() == inode.hashCode()) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
