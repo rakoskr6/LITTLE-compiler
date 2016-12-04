@@ -4,7 +4,8 @@ import java.io.*;
 
 class ControlFlowNode {
     private ArrayList<IRNode> statementList = new ArrayList<IRNode>();
-    private ArrayList<ControlFlowNode> adjacencyList = new ArrayList<ControlFlowNode>();
+    private ArrayList<ControlFlowNode> successorList = new ArrayList<ControlFlowNode>();
+    private ArrayList<ControlFlowNode> predecessorList = new ArrayList<ControlFlowNode>();
 
     public ControlFlowNode(IRNode leader) {
         this.statementList.add(leader);
@@ -13,8 +14,11 @@ class ControlFlowNode {
     public void appendStatement(IRNode inode) {
         this.statementList.add(inode);
     }
-    public void appendAdjacency(ControlFlowNode cfn) {
-        this.adjacencyList.add(cfn);
+    public void appendSuccessor(ControlFlowNode cfn) {
+        this.successorList.add(cfn);
+    }
+    public void appendPredecessor(ControlFlowNode cfn) {
+        this.predecessorList.add(cfn);
     }
 
     public ArrayList<IRNode> getStatementList() {
@@ -37,8 +41,12 @@ class ControlFlowNode {
             statement.printIRNode();
         }
         if(printEdges) {
-            System.out.println("Printing leaders of edges:");
-            for(ControlFlowNode cfn : adjacencyList) {
+            System.out.println("Printing successor edges:");
+            for(ControlFlowNode cfn : successorList) {
+                cfn.getLeaderStatement().printIRNode();
+            }
+            System.out.println("Printing predecessor edges:");
+            for(ControlFlowNode cfn : predecessorList) {
                 cfn.getLeaderStatement().printIRNode();
             }
         }
