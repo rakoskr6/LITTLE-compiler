@@ -1615,10 +1615,12 @@ class AntlrGlobalListener extends MicroBaseListener {
                 IRNode inode = ilist.getNode(j);
                 String irstring = inode.getIRString();
                 if(irstring.matches("LABEL\\s+[A-Za-z][A-Za-z0-9]{0,30}$") && !irstring.matches("LABEL\\s+label[0-9]+$")) {
-                    // printLeaderSet();
-                    ArrayList<IRNode> worklist = createWorklist();
-                    ControlFlowGraph cfg = new ControlFlowGraph(worklist, ilist, inode.getStatementNum());
-                    cfgList.add(cfg);
+                    if(!leaderSet.isEmpty()) {
+                        // printLeaderSet();
+                        ArrayList<IRNode> worklist = createWorklist();
+                        ControlFlowGraph cfg = new ControlFlowGraph(worklist, ilist, inode.getStatementNum());
+                        cfgList.add(cfg);
+                    }
                     leaderSet.clear();
                     leaderSet.add(inode);
                 }
