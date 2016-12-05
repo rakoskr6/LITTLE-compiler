@@ -107,6 +107,8 @@ public class TinyGen {
                         } else if (s1.startsWith("$R")) {
                             i1 = 6 + numParams;
                             opd1 = "$" + i1;
+                        } else if ((!s1.matches("[0-9]+")) && (!s1.startsWith("$T")) && (!s1.matches("r[0-9]")) && (!s1.matches("")) && (!s1.startsWith("label"))) {
+                            opd1 = "" + "r" + reg.getRegister(opd1Org);
                         }
 
                         if (s2.startsWith("$P")) {
@@ -122,7 +124,11 @@ public class TinyGen {
                         } else if (s2.startsWith("$R")) {
                             i2 = 6 + numParams;
                             opd2 = "$" + i2;
+                        } else if ((!s2.matches("[0-9]+")) && (!s2.startsWith("$T")) && (!s2.matches("r[0-9]")) && (!s2.matches("")) && (!s2.startsWith("label"))) {
+                            opd2 = "" + "r" + reg.getRegister(opd2Org);
+                            
                         }
+
 
                         if (s3.startsWith("$P")) {
                             s3 = s3.replace("$P", "");
@@ -137,12 +143,17 @@ public class TinyGen {
                         } else if (s3.startsWith("$R")) {
                             i3 = 6 + numParams;
                             res = "$" + i3;
+                        } else if ((!s3.matches("[0-9]+")) && (!s3.startsWith("$T")) && (!s3.matches("r[0-9]")) && (!s3.matches(""))&& (!s3.startsWith("label"))) {
+                            res = "" + "r" + reg.getRegister(res);
                         }
+
                 }
 
                 if (op.equals("STOREI")) {
+                    reg.switchIfRegisters(opd1, res, opd1Org, resOrg);
                     System.out.println("move " + opd1 + " " + res);
                 } else if (op.equals("STOREF")) {
+                    reg.switchIfRegisters(opd1, res, opd1Org, resOrg);
                     System.out.println("move " + opd1 + " " + res);
                 } else if (op.equals("ADDI")) {
                     System.out.println("move " + opd1 + " " + res);
@@ -173,12 +184,6 @@ public class TinyGen {
                 } else if (op.equals("WRITEF")) {
                     System.out.println("sys writer " + opd1);
                 } else if (op.equals("READI")) {
-
-                    
-
-                    
-
-
                     System.out.println("sys readi " + res);
                 } else if (op.equals("LABEL")) {
                     if (!opd1.isEmpty()) {

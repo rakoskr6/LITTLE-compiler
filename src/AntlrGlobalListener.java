@@ -27,6 +27,7 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     // debug
     public boolean debugST = false;
+    public boolean brianDebug = false;
 
     public AntlrGlobalListener() {
         this.blockCounter = 1;
@@ -136,7 +137,9 @@ class AntlrGlobalListener extends MicroBaseListener {
             cfgList.add(cfg);
         }
         // printCFGList(true);
-        printSCFGList(true);
+        if (brianDebug) {
+	        printSCFGList(true);
+    	}
     }
 
     public ArrayList<IRNode> createWorklist() {

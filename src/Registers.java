@@ -67,4 +67,17 @@ public class Registers {
 
     }
 
+    public void switchIfRegisters(String opd1, String res, String opd1Org, String resOrg) {
+        if (opd1.matches("r[0-9]") && res.matches("r[0-9]")) { // if both registers, will want to copy
+            int opd1Num = Integer.parseInt(opd1.replaceAll("\\D+",""));
+            int resNum = Integer.parseInt(res.replaceAll("\\D+",""));
+
+            this.debug = false;
+            setRegister(opd1Num, resOrg, this.dirty.get(resNum));
+            this.debug = true;
+            setRegister(resNum, "", 0);
+        }
+    }
+
+
 }
