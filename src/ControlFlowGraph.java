@@ -16,6 +16,31 @@ class ControlFlowGraph {
         convertBlockCFGtoStatementCFG(worklist);
     }
 
+    public HashMap<IRNode,ControlFlowNode> getBlockLevelGraph() {
+        return graph;
+    }
+    public HashMap<IRNode,ControlFlowNode> getStatementLevelGraph() {
+        return statementGraph;
+    }
+    public ControlFlowNode getCFNodeFromIRNode(IRNode inode) {
+        // NOTE: returns null if IRNode is not found
+        ControlFlowNode lookup = graph.get(inode);
+        if(cfn != null) {
+             return lookup;
+        }
+        else {
+            for(Map.Entry<IRNode,ControlFlowNode> entry : graph.entrySet()) {
+                ControlFlowNode cfnFromGraph = entry.getValue();
+                for(IRNode statement : cfnFromGraph.getStatementList()) {
+                    if(inode.equals(statement)) {
+                        return cfnFromGraph;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void setGraph(HashMap<IRNode,ControlFlowNode> newgraph) {
         this.graph = newgraph;
     }
