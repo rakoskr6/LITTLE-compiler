@@ -107,7 +107,7 @@ public class TinyGen {
                         } else if (s1.startsWith("$R")) {
                             i1 = 6 + numParams;
                             opd1 = "$" + i1;
-                        } else if ((!s1.matches("[0-9]+")) && (!s1.startsWith("$T")) && (!s1.matches("r[0-9]")) && (!s1.matches("")) && (!s1.startsWith("label"))) {
+                        } else if ((!s1.matches("[0-9]+")) && (!s1.startsWith("$T")) && (!s1.matches("r[0-9]")) && (!s1.matches("")) && (!s1.startsWith("label")) && (!op.equals("JSR")) && (!op.equals("WRITES"))) {
                             opd1 = "" + "r" + reg.getRegister(opd1Org,opd2Org,resOrg);
                         }
 
@@ -124,7 +124,7 @@ public class TinyGen {
                         } else if (s2.startsWith("$R")) {
                             i2 = 6 + numParams;
                             opd2 = "$" + i2;
-                        } else if ((!s2.matches("[0-9]+")) && (!s2.startsWith("$T")) && (!s2.matches("r[0-9]")) && (!s2.matches("")) && (!s2.startsWith("label"))) {
+                        } else if ((!s2.matches("[0-9]+")) && (!s2.startsWith("$T")) && (!s2.matches("r[0-9]")) && (!s2.matches("")) && (!s2.startsWith("label")) && (!op.equals("JSR")) && (!op.equals("WRITES"))) {
                             opd2 = "" + "r" + reg.getRegister(opd2Org,opd1Org,resOrg);
                             
                         }
@@ -143,7 +143,7 @@ public class TinyGen {
                         } else if (s3.startsWith("$R")) {
                             i3 = 6 + numParams;
                             res = "$" + i3;
-                        } else if ((!s3.matches("[0-9]+")) && (!s3.startsWith("$T")) && (!s3.matches("r[0-9]")) && (!s3.matches(""))&& (!s3.startsWith("label"))) {
+                        } else if ((!s3.matches("[0-9]+")) && (!s3.startsWith("$T")) && (!s3.matches("r[0-9]")) && (!s3.matches("")) && (!s3.startsWith("label")) && (!op.equals("JSR")) && (!op.equals("WRITES"))) {
                             res = "" + "r" + reg.getRegister(res,opd1Org,opd2Org);
                         }
 
