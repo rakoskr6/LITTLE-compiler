@@ -25,7 +25,7 @@ class ControlFlowGraph {
     public ControlFlowNode getCFNodeFromIRNode(IRNode inode) {
         // NOTE: returns null if IRNode is not found
         ControlFlowNode lookup = graph.get(inode);
-        if(cfn != null) {
+        if(lookup != null) {
              return lookup;
         }
         else {
