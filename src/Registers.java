@@ -9,6 +9,7 @@ public class Registers {
 	private List <String> registers;
 	private List <String> spilled;
 	private boolean debug = true;
+    private int maxRegs = 4;
 
     public Registers() {
         dirty = new ArrayList<Integer>(Arrays.asList(0,0,0,0));
@@ -16,14 +17,14 @@ public class Registers {
         spilled = new ArrayList<String>();
 
         if (debug) {
-       	 	System.out.println("---Initilization---");
-        	System.out.println("Registers: " + registers);
-        	System.out.println("Dirty:     " + dirty + "\n");
+       	 	System.out.println(";---Initilization---");
+        	System.out.println(";Registers: " + registers);
+        	System.out.println(";Dirty:     " + dirty + "\n");
     	}
     }
 
     private void setRegister(int regNum, String regName, int dirty) {
-    	if ((regNum < 4) && ((dirty == 0) || (dirty == 1))) {
+    	if ((regNum < maxRegs) && ((dirty == 0) || (dirty == 1))) {
 	    	this.registers.set(regNum,regName);
 	    	this.dirty.set(regNum,dirty);
     	}
@@ -32,37 +33,53 @@ public class Registers {
     	}
 
     	if (debug) {
-        	System.out.println("Registers after line: " + registers);
-        	System.out.println("Dirty:                " + this.dirty);
+        	System.out.println(";Registers after line: " + registers);
+        	System.out.println(";Dirty:                " + this.dirty);
     	}
     }
 
 
-    public int getRegister(String regName) { // gets register to use
+    public int getRegister(String regName, String usedReg1, String usedReg2) { // gets register to use
     	    	
     	if(this.spilled.contains(regName)) { // if variable was spilled, reload into register
-    		spill(regName);
+    		spill(regName,usedReg1,usedReg2);
+            this.spilled.remove(regName);
+            setRegister(this.registers.indexOf(""),regName,0);
     	}
     	else if(!this.registers.contains(regName)) { // if not spilled and not in register, load into register
-	    		spill(regName);
+	    		spill(regName,usedReg1,usedReg2);
 	    		setRegister(this.registers.indexOf(""),regName,1);
 	    }
 	    // else in register and nothing needed
 
 	    return this.registers.indexOf(regName);
     }
+    public int getRegister(String regName, String usedReg1) {  
+        return getRegister(regName, usedReg1, "");
+    }
 
-    public void spill(String regName) {
+    public int getRegister(String regName) {  
+        return getRegister(regName, "", "");
+    }
+
+
+    public void spill(String regName, String usedReg1, String usedReg2) { 
 	    if(this.registers.indexOf("") != -1) { // there is a free register
 	    	return;
 	    }
 	    else {
-	    	// TODO
-	    		// Find register used furthest away
-	    		// Put onto spilled list
-	    	System.out.println("No free registers (temporarily making one)");
-	    	setRegister(3,"",1);
-
+	    	//System.out.println("No free registers, " + usedReg1 + ", " + usedReg2 + " used");
+            for (int i=0; i < maxRegs; i++) { // find register to spill that is not already used
+                String curReg = this.registers.get(i);
+                if ((curReg != usedReg1) && (curReg != usedReg2)) {
+                    System.out.println(";Spilled " + curReg);
+                    this.spilled.add(curReg);
+                    this.dirty.set(i,0);
+                    setRegister(i,"",0);
+                    return;
+                }
+            }
+	    	
 	    }
 
     }

@@ -74,12 +74,12 @@ public class TinyGen {
                 }
                 if (opd2.matches("^\\$T\\d+$")) {
                     int val = new Scanner(opd2).useDelimiter("\\D+").nextInt();
-                    opd2 = "" + "r" + reg.getRegister(opd2Org);
+                    opd2 = "" + "r" + reg.getRegister(opd2Org,opd1Org);
                     //opd2 = "" + "r" + Integer.toString(val - 1);
                 }
                 if (res.matches("^\\$T\\d+$")) {
                     int val = new Scanner(res).useDelimiter("\\D+").nextInt();
-                    res = "" + "r" + reg.getRegister(res);
+                    res = "" + "r" + reg.getRegister(res,opd1Org,opd2Org);
                     //res = "" + "r" + Integer.toString(val - 1);
                 }
 
@@ -108,7 +108,7 @@ public class TinyGen {
                             i1 = 6 + numParams;
                             opd1 = "$" + i1;
                         } else if ((!s1.matches("[0-9]+")) && (!s1.startsWith("$T")) && (!s1.matches("r[0-9]")) && (!s1.matches("")) && (!s1.startsWith("label"))) {
-                            opd1 = "" + "r" + reg.getRegister(opd1Org);
+                            opd1 = "" + "r" + reg.getRegister(opd1Org,opd2Org,resOrg);
                         }
 
                         if (s2.startsWith("$P")) {
@@ -125,7 +125,7 @@ public class TinyGen {
                             i2 = 6 + numParams;
                             opd2 = "$" + i2;
                         } else if ((!s2.matches("[0-9]+")) && (!s2.startsWith("$T")) && (!s2.matches("r[0-9]")) && (!s2.matches("")) && (!s2.startsWith("label"))) {
-                            opd2 = "" + "r" + reg.getRegister(opd2Org);
+                            opd2 = "" + "r" + reg.getRegister(opd2Org,opd1Org,resOrg);
                             
                         }
 
@@ -144,7 +144,7 @@ public class TinyGen {
                             i3 = 6 + numParams;
                             res = "$" + i3;
                         } else if ((!s3.matches("[0-9]+")) && (!s3.startsWith("$T")) && (!s3.matches("r[0-9]")) && (!s3.matches(""))&& (!s3.startsWith("label"))) {
-                            res = "" + "r" + reg.getRegister(res);
+                            res = "" + "r" + reg.getRegister(res,opd1Org,opd2Org);
                         }
 
                 }
@@ -273,8 +273,11 @@ public class TinyGen {
                 } else {
                     System.out.println("Unsupported operation: " + op);
                 }
-
+                
+                // ???.getOutSetFromIRNode(inode);
             }
+
+
         }
 
     }
