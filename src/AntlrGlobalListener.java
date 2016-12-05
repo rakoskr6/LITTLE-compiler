@@ -91,6 +91,17 @@ class AntlrGlobalListener extends MicroBaseListener {
         TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
         tg.CreateTiny();
         
+        /*
+        Registers reg = new Registers();
+		reg.newRegister("R1", 0);
+		reg.newRegister("R2");
+		reg.newRegister("R3",1);
+		reg.newRegister("R4");
+		reg.newRegister("R5");
+	*/
+
+
+
         System.out.println("end");
     }
 
@@ -134,7 +145,7 @@ class AntlrGlobalListener extends MicroBaseListener {
             cfgList.add(cfg);
         }
         // printCFGList(true);
-        printSCFGList(true);
+        //printSCFGList(true);
     }
 
     public ArrayList<IRNode> createWorklist() {
