@@ -32,9 +32,8 @@ public class Registers {
     	}
 
     	if (debug) {
-    		System.out.println("---Current Registers---");
-        	System.out.println("Registers: " + registers);
-        	System.out.println("Dirty:     " + this.dirty + "\n");
+        	System.out.println("Registers after line: " + registers);
+        	System.out.println("Dirty:                " + this.dirty);
     	}
     }
 

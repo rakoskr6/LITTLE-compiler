@@ -24,10 +24,12 @@ public class TinyGen {
         for (int i = 0; i < AntlrGlobalListener.allSymbolTables.get(0).objectList.size(); ++i) {
             if (AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType == "STRING") {
                 System.out.print("str ");
+            System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName + " " + AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varValue);  
             } else {
-                System.out.print(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType + " ");
+                //System.out.print(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType + " ");
+                System.out.print("var ");
+                System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName);
             }
-            System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName + " " + AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varValue);
         }
         // Print this every time
         System.out.println("push \npush r0 \npush r1 \npush r2 \npush r3 \njsr main\nsys halt");
@@ -37,7 +39,7 @@ public class TinyGen {
         for (IRList ilist: allIRLists) {
 
             for (IRNode inode: ilist.getList()) {
-                System.out.println(";" + inode.getOpcode() + " " + inode.getOperand1() + " " + inode.getOperand2() + " " + inode.getResult());
+                System.out.println("\n;" + inode.getOpcode() + " " + inode.getOperand1() + " " + inode.getOperand2() + " " + inode.getResult());
 
 
                 String op = inode.getOpcode();

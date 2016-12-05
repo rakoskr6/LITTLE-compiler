@@ -83,7 +83,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
 
         System.out.println(";IR code");
-        //printIRLists(false);
+        printIRLists(false);
 
         allIRLists = numericizeProgram();
         constructCFGList();
