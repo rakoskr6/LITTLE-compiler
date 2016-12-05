@@ -8,6 +8,7 @@ public class TinyGen {
     private List < IRList > allIRLists = new ArrayList < IRList > ();
     private Hashtable < String, String > regTypeTable = new Hashtable < String, String > ();
     private AntlrGlobalListener agl;
+    static public int numVarInScope;
 
     public TinyGen(List < IRList > allIRLists, Hashtable < String, String > regTypeTable, AntlrGlobalListener agl) {
         this.allIRLists = allIRLists;
@@ -246,6 +247,7 @@ public class TinyGen {
                     for (SymbolTable sym: AntlrGlobalListener.allSymbolTables) {
                         if (sym.scope == scope) {
                             numVar = sym.getNumVarsInScope();
+                            numVarInScope = sym.getNumVarsInScope();
                             currSymTable = sym;
                             numParams = sym.getNumParamsInScope();
 
@@ -263,6 +265,7 @@ public class TinyGen {
                     System.out.println("sys readr " + res);
                 } else if (op.equals("JSR")) {
                     System.out.println("push r0\npush r1\npush r2\npush r3");
+                    reg.spillAll();
                     System.out.println("jsr " + opd1);
                     System.out.println("pop r3\npop r2\npop r1\npop r0");
 
@@ -284,7 +287,6 @@ public class TinyGen {
                 System.out.println();
 
                 reg.updateLive(agl.getOutSetFromGraphs(inode));
-
                 
             }
 

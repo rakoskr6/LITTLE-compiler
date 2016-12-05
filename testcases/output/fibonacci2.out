@@ -87,13 +87,17 @@ push r2
 push r3
 jsr main
 sys halt
+
 ;LABEL F	 live vars: $P1, 
 label F
+
 ;LINK	 live vars: $P1, 
 link 16
+
 ;STOREI 2 $T1	 live vars: $P1, $T1, 
 ;ensure(): $T1 gets register r3 { r0->null r1->null r2->null r3->$T1 }
 move 2 r3
+
 ;LE $P1 $T1 label1	 live vars: $P1, 
 ;ensure(): $P1 gets register r2 { r0->null r1->null r2->$P1 r3->$T1 }
 ;loading $P1 to register r2
@@ -105,9 +109,11 @@ cmpi r2 r3
 move r3 $-3
 ;Spilling registers at the end of the Basic Block
 jle label1
+
 ;STOREI 1 $T2	 live vars: $P1, $T2, 
 ;ensure(): $T2 gets register r3 { r0->null r1->null r2->null r3->$T2 }
 move 1 r3
+
 ;SUBI $P1 $T2 $T3	 live vars: $T3, $P1, 
 ;ensure(): $P1 gets register r2 { r0->null r1->null r2->$P1 r3->$T2 }
 ;loading $P1 to register r2
@@ -118,14 +124,17 @@ subi r3 r2
 ;Freeing unused variable $T2
 ;Spilling variable: $T2
 move r3 $-4
+
 ;PUSH 	 live vars: $T3, $P1, 
 push 
+
 ;PUSH $T3	 live vars: $P1, 
 ;ensure(): $T3 has register r2 { r0->null r1->null r2->$T3 r3->null }
 push r2
 ;Freeing unused variable $T3
 ;Spilling variable: $T3
 move r2 $-5
+
 ;JSR F	 live vars: $P1, 
 push r0
 push r1

@@ -89,7 +89,8 @@ public class Registers {
                     this.spilled.add(curReg);
 
                     if (curReg.startsWith("$T")) {
-                        System.out.println("move r" + i + " $-" + curReg.replaceAll("\\D+",""));
+                        int x = TinyGen.numVarInScope + Integer.parseInt(curReg.replaceAll("\\D+",""));
+                        System.out.println("move r" + i + " $-" + x);
                     }
                     else {
                         System.out.println("move r" + i + " " + curReg);
@@ -122,7 +123,8 @@ public class Registers {
         for (int i = 0; i < maxRegs; i++) {
             if (this.registers.get(i) != "") {
                 if (this.registers.get(i).startsWith("$T")) {
-                    System.out.println("move r" + i + " $-" + this.registers.get(i).replaceAll("\\D+",""));
+                    int x = TinyGen.numVarInScope + Integer.parseInt(this.registers.get(i).replaceAll("\\D+",""));
+                    System.out.println("move r" + i + " $-" + x);
                 }
                 else {
                     System.out.println("move r" + i + " " + this.registers.get(i));
@@ -146,7 +148,8 @@ public class Registers {
                 if (this.registers.get(i) != "") { // if register is not empty
                     System.out.println(";-- Updating livliness --");
                     if (this.registers.get(i).startsWith("$T")) {
-                        System.out.println("move r" + i + " $-" + this.registers.get(i).replaceAll("\\D+",""));
+                        int x = TinyGen.numVarInScope + Integer.parseInt(this.registers.get(i).replaceAll("\\D+",""));
+                        System.out.println("move r" + i + " $-" + x);
                     }
                     else {
                         System.out.println("move r" + i + " " + this.registers.get(i));
