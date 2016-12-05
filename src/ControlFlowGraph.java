@@ -257,17 +257,7 @@ class ControlFlowGraph {
 
     public void generateInAndOut() {
         // list ordering
-        ArrayList<IRNode> orderedList = new ArrayList<IRNode>();
-        for(Map.Entry<IRNode,ControlFlowNode> entry : statementGraph.entrySet()) {
-            IRNode inode = entry.getKey();
-            orderedList.add(inode);
-        }
-        Collections.sort(orderedList, new Comparator<IRNode>() {
-            @Override
-            public int compare(IRNode inode1, IRNode inode2) {
-                return inode1.getStatementNum() - inode2.getStatementNum();
-            }
-        });
+        ArrayList<IRNode> orderedList = generateOrderedList();
         // generating sets
         for(int i = orderedList.size()-1; i >= 0; --i) {
             ControlFlowNode cfn = statementGraph.get(orderedList.get(i));
@@ -295,6 +285,57 @@ class ControlFlowGraph {
             cfn.setInSet(inSet);
             cfn.setOutSet(outSet);
         }
+
+        boolean isEqual = false;
+        while(!isEqual) {
+            isEqual = true;
+            for(int i = orderedList.size()-1; i >= 0; --i) {
+                ControlFlowNode cfn = statementGraph.get(orderedList.get(i));
+                HashSet<String> inSet = new HashSet<String>();
+                HashSet<String> outSet = new HashSet<String>();
+                if(!orderedList.get(i).getOpcode().equals("RET")) {
+                    for(ControlFlowNode successor : cfn.getSuccessorList()) {
+                        outSet.addAll(successor.getInSet());
+                    }
+                    HashSet<String> genSet = new HashSet<String>(cfn.getGenSet());
+                    HashSet<String> killSet = new HashSet<String>(cfn.getKillSet());
+                    inSet.addAll(outSet);
+                    inSet.removeAll(killSet);
+                    inSet.addAll(genSet);
+                }
+                else {
+                    for(int j = AntlrGlobalListener.allSymbolTables.size()-1; j >= 0; --j) {
+                        SymbolTable currTable = AntlrGlobalListener.allSymbolTables.get(j);
+                        ArrayList<String> globList = currTable.getGlobals();
+                        for(String glob : globList) {
+                            outSet.add(glob);
+                        }
+                    }
+                }
+                // compare in and out
+                if(!cfn.getInSet().equals(inSet) || !cfn.getOutSet().equals(outSet)) {
+                    isEqual = false;
+                }
+                // set the node
+                cfn.setInSet(inSet);
+                cfn.setOutSet(outSet);
+            }   
+        }
+    }
+
+    private ArrayList<IRNode> generateOrderedList() {
+        ArrayList<IRNode> orderedList = new ArrayList<IRNode>();
+        for(Map.Entry<IRNode,ControlFlowNode> entry : statementGraph.entrySet()) {
+            IRNode inode = entry.getKey();
+            orderedList.add(inode);
+        }
+        Collections.sort(orderedList, new Comparator<IRNode>() {
+            @Override
+            public int compare(IRNode inode1, IRNode inode2) {
+                return inode1.getStatementNum() - inode2.getStatementNum();
+            }
+        });
+        return orderedList;
     }
 
     private String getScopeReg(String value) {
