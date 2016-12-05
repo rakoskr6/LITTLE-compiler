@@ -6,14 +6,14 @@ class ControlFlowGraph {
     private HashMap<IRNode,ControlFlowNode> graph = new HashMap<IRNode,ControlFlowNode>();
     private HashMap<IRNode,ControlFlowNode> statementGraph = new HashMap<IRNode,ControlFlowNode>();
     private ArrayList<IRNode> wlist = new ArrayList<IRNode>();
-    private ArrayList<IRNode> slist = new ArrayList<IRNode>();
 
     public ControlFlowGraph(ArrayList<IRNode> worklist, IRList irlist, int endOfFuncNum) {
         this.wlist = new ArrayList<IRNode>(worklist);
         generateNodes(new ArrayList<IRNode>(worklist), irlist, endOfFuncNum);
         constructEdges(worklist);
-        //printControlFlowGraph(true);
+        printControlFlowGraph(true);
         convertBlockCFGtoStatementCFG(worklist);
+        generateInAndOut();
     }
 
     public HashMap<IRNode,ControlFlowNode> getBlockLevelGraph() {
@@ -145,6 +145,9 @@ class ControlFlowGraph {
                         statementNode.appendPredecessor(statementGraph.get(cfn.getStatementList().get(j-1)));
                     }
                 }
+                ArrayList<HashSet<String>> genAndKillSets = generateGenAndKill(statement);
+                statementNode.setGenSet(genAndKillSets.get(0));
+                statementNode.setKillSet(genAndKillSets.get(1));
                 statementGraph.put(statement, statementNode);
             }
         }
@@ -170,6 +173,105 @@ class ControlFlowGraph {
                 }
             }
         }
+    }
+
+    public ArrayList<HashSet<String>> generateGenAndKill(IRNode inode) {
+        HashSet<String> genSet = new HashSet<String>();
+        HashSet<String> killSet = new HashSet<String>();
+
+        String opcode = inode.getOpcode();
+        String operand1 = inode.getOperand1();
+        String operand2 = inode.getOperand2();
+        String result = inode.getResult();
+
+        if(opcode.equals("PUSH") && !operand1.equals("")) { 
+            // PUSH instructions use the variable/temporary being pushed
+            genSet.add(operand1);
+        }
+        else if(opcode.equals("POP") && !operand1.equals("")) {
+            // POP instructions define the variable/temporary being popped
+            killSet.add(operand1);
+        }
+        else if(opcode.contains("WRITE")) {
+            // WRITE instructions use their variables
+            genSet.add(operand1);
+        }
+        else if(opcode.contains("READ")) {
+            // READ instructions define their variables
+            killSet.add(result);
+        }
+        else if(opcode.contains("JSR")) {
+            // CALL instructions require special care. Because we do not analyze liveness 
+            // across functions, we must make conservative assumptions about what happens 
+            // function calls. In particular, we GEN any variables that may be used, and 
+            // KILL any variables that must be used. The GEN set for any CALL instruction 
+            // therefore contains all global variables, while the KILL set is empty.
+        }
+        else if(opcode.matches("(LE|GE|LT|GT|EQ|NE)")) {
+            if(!operand1.equals("") && !operand1.matches("\\d+"))
+                genSet.add(operand1);
+            if(!operand2.equals("") && !operand2.matches("\\d+"))
+                genSet.add(operand2);
+        }
+        else if(opcode.equals("LABEL") || opcode.equals("LINK") || opcode.equals("JUMP")){
+
+        }
+        else {
+            if(!result.equals(""))
+                killSet.add(result);
+            if(!operand1.equals("") && !operand1.matches("\\d+"))
+                genSet.add(operand1);
+            if(!operand2.equals("") && !operand2.matches("\\d+"))
+                genSet.add(operand2);
+        } 
+        ArrayList<HashSet<String>> returnList = new ArrayList<HashSet<String>>();
+        returnList.add(genSet);
+        returnList.add(killSet);
+        return returnList;
+    }
+
+    public void generateInAndOut() {
+        // list ordering
+        ArrayList<IRNode> orderedList = new ArrayList<IRNode>();
+        for(Map.Entry<IRNode,ControlFlowNode> entry : statementGraph.entrySet()) {
+            IRNode inode = entry.getKey();
+            orderedList.add(inode);
+        }
+        Collections.sort(orderedList, new Comparator<IRNode>() {
+            @Override
+            public int compare(IRNode inode1, IRNode inode2) {
+                return inode1.getStatementNum() - inode2.getStatementNum();
+            }
+        });
+        // generating sets
+        for(int i = orderedList.size()-1; i >= 0; --i) {
+            ControlFlowNode cfn = statementGraph.get(orderedList.get(i));
+            HashSet<String> inSet = new HashSet<String>();
+            HashSet<String> outSet = new HashSet<String>();
+            for(ControlFlowNode successor : cfn.getSuccessorList()) {
+                outSet.addAll(successor.getInSet());
+            }
+            HashSet<String> genSet = new HashSet<String>(cfn.getGenSet());
+            HashSet<String> killSet = new HashSet<String>(cfn.getKillSet());
+            inSet.addAll(outSet);
+            inSet.removeAll(killSet);
+            inSet.addAll(genSet);
+            cfn.setInSet(inSet);
+            cfn.setOutSet(outSet);
+        }
+    }
+
+    private String getScopeReg(String value) {
+        for(int i = AntlrGlobalListener.allSymbolTables.size()-1; i >= 0; --i) {
+            SymbolTable currTable = AntlrGlobalListener.allSymbolTables.get(i);
+            String lookup = currTable.getScopeRegByVarName(value);
+            if(!lookup.equals("")) 
+                return lookup;
+            if(!currTable.scope.contains("BLOCK") && !currTable.scope.equals("GLOBAL")) {
+                i = 1; // move to GLOBAL
+            }
+        }
+        return "";
     }
 
     public void printControlFlowGraph(boolean printEdges) {
