@@ -27,6 +27,7 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     // debug
     public boolean debugST = false;
+    public boolean brianDebug = false;
 
     public AntlrGlobalListener() {
         this.blockCounter = 1;
@@ -83,23 +84,14 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
 
         System.out.println(";IR code");
-        // printIRLists(false);
+        printIRLists(false);
 
         allIRLists = numericizeProgram();
         constructCFGList();
 
-        // TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
-        // tg.CreateTiny();
-        
-        /*
-        Registers reg = new Registers();
-		reg.newRegister("R1", 0);
-		reg.newRegister("R2");
-		reg.newRegister("R3",1);
-		reg.newRegister("R4");
-		reg.newRegister("R5");
-	*/
 
+        TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
+        tg.CreateTiny();
 
 
         System.out.println("end");
@@ -145,7 +137,9 @@ class AntlrGlobalListener extends MicroBaseListener {
             cfgList.add(cfg);
         }
         // printCFGList(true);
-        // printSCFGList(true);
+        if (brianDebug) {
+	        printSCFGList(true);
+    	}
     }
 
     public HashSet<String> getOutSetFromGraphs(IRNode inode) {

@@ -19,13 +19,17 @@ public class TinyGen {
     public void CreateTiny() {
         System.out.println(";tiny code");
 
+        Registers reg = new Registers();
+
         for (int i = 0; i < AntlrGlobalListener.allSymbolTables.get(0).objectList.size(); ++i) {
             if (AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType == "STRING") {
                 System.out.print("str ");
+            System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName + " " + AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varValue);  
             } else {
-                System.out.print(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType + " ");
+                //System.out.print(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType + " ");
+                System.out.print("var ");
+                System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName);
             }
-            System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName + " " + AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varValue);
         }
         // Print this every time
         System.out.println("push \npush r0 \npush r1 \npush r2 \npush r3 \njsr main\nsys halt");
@@ -35,10 +39,18 @@ public class TinyGen {
         for (IRList ilist: allIRLists) {
 
             for (IRNode inode: ilist.getList()) {
+                System.out.println("\n;" + inode.getOpcode() + " " + inode.getOperand1() + " " + inode.getOperand2() + " " + inode.getResult());
+
+
                 String op = inode.getOpcode();
                 String opd1 = inode.getOperand1();
                 String opd2 = inode.getOperand2();
                 String res = inode.getResult();
+
+                String opOrg = inode.getOpcode();
+                String opd1Org = inode.getOperand1();
+                String opd2Org = inode.getOperand2();
+                String resOrg = inode.getResult();
 
                 boolean is_float = true;
                 if (regTypeTable.containsKey(opd1)) {
@@ -57,24 +69,29 @@ public class TinyGen {
 
                 if (opd1.matches("^\\$T\\d+$")) {
                     int val = new Scanner(opd1).useDelimiter("\\D+").nextInt();
-                    opd1 = "" + "r" + Integer.toString(val - 1);
-                    // System.out.println(opd1);
+                    opd1 = "" + "r" + reg.getRegister(opd1Org);
+                    //opd1 = "" + "r" + Integer.toString(val - 1);
                 }
                 if (opd2.matches("^\\$T\\d+$")) {
                     int val = new Scanner(opd2).useDelimiter("\\D+").nextInt();
-                    opd2 = "" + "r" + Integer.toString(val - 1);
-                    // System.out.println(opd2);
+                    opd2 = "" + "r" + reg.getRegister(opd2Org,opd1Org);
+                    //opd2 = "" + "r" + Integer.toString(val - 1);
                 }
                 if (res.matches("^\\$T\\d+$")) {
                     int val = new Scanner(res).useDelimiter("\\D+").nextInt();
-                    res = "" + "r" + Integer.toString(val - 1);
-                    // System.out.println(res);
+                    res = "" + "r" + reg.getRegister(res,opd1Org,opd2Org);
+                    //res = "" + "r" + Integer.toString(val - 1);
                 }
+
+
+                //System.out.println(";" + op + " " + opd1 + " " + opd2 + " " + res);
+
 
                 // Redefined opps for easy manipulation
                 String s1 = opd1, s2 = opd2, s3 = res;
                 Integer i1 = 0, i2 = 0, i3 = 0;
                 
+                // maybe have to copy this stuff to registers! :(
                 // Appropriatly manipulates strings for certain opps
                 if (op.equals("STOREI") || op.equals("STOREF") || op.equals("ADDI") || op.equals("ADDF") || op.equals("SUBF") || op.equals("SUBI") || op.equals("MULTI") || op.equals("MULTF") || op.equals("DIVI") || op.equals("DIVF") || op.equals("WRITEI") || op.equals("WRITEF") || op.equals("READI") || op.equals("LE") || op.equals("GE") || op.equals("LT") || op.equals("GT") || op.equals("EQ") || op.equals("NE") || op.equals("WRITES") || op.equals("READF") || op.equals("JSR") || op.equals("POP") || op.equals("PUSH")) {
                     if (s1.startsWith("$P")) {
@@ -90,6 +107,8 @@ public class TinyGen {
                         } else if (s1.startsWith("$R")) {
                             i1 = 6 + numParams;
                             opd1 = "$" + i1;
+                        } else if ((!s1.matches("[0-9]+")) && (!s1.startsWith("$T")) && (!s1.matches("r[0-9]")) && (!s1.matches("")) && (!s1.startsWith("label"))) {
+                            opd1 = "" + "r" + reg.getRegister(opd1Org,opd2Org,resOrg);
                         }
 
                         if (s2.startsWith("$P")) {
@@ -105,7 +124,11 @@ public class TinyGen {
                         } else if (s2.startsWith("$R")) {
                             i2 = 6 + numParams;
                             opd2 = "$" + i2;
+                        } else if ((!s2.matches("[0-9]+")) && (!s2.startsWith("$T")) && (!s2.matches("r[0-9]")) && (!s2.matches("")) && (!s2.startsWith("label"))) {
+                            opd2 = "" + "r" + reg.getRegister(opd2Org,opd1Org,resOrg);
+                            
                         }
+
 
                         if (s3.startsWith("$P")) {
                             s3 = s3.replace("$P", "");
@@ -120,12 +143,17 @@ public class TinyGen {
                         } else if (s3.startsWith("$R")) {
                             i3 = 6 + numParams;
                             res = "$" + i3;
+                        } else if ((!s3.matches("[0-9]+")) && (!s3.startsWith("$T")) && (!s3.matches("r[0-9]")) && (!s3.matches(""))&& (!s3.startsWith("label"))) {
+                            res = "" + "r" + reg.getRegister(res,opd1Org,opd2Org);
                         }
+
                 }
 
                 if (op.equals("STOREI")) {
+                    reg.switchIfRegisters(opd1, res, opd1Org, resOrg);
                     System.out.println("move " + opd1 + " " + res);
                 } else if (op.equals("STOREF")) {
+                    reg.switchIfRegisters(opd1, res, opd1Org, resOrg);
                     System.out.println("move " + opd1 + " " + res);
                 } else if (op.equals("ADDI")) {
                     System.out.println("move " + opd1 + " " + res);
@@ -156,12 +184,6 @@ public class TinyGen {
                 } else if (op.equals("WRITEF")) {
                     System.out.println("sys writer " + opd1);
                 } else if (op.equals("READI")) {
-
-                    
-
-                    
-
-
                     System.out.println("sys readi " + res);
                 } else if (op.equals("LABEL")) {
                     if (!opd1.isEmpty()) {
@@ -251,8 +273,11 @@ public class TinyGen {
                 } else {
                     System.out.println("Unsupported operation: " + op);
                 }
-
+                
+                // ???.getOutSetFromIRNode(inode);
             }
+
+
         }
 
     }
