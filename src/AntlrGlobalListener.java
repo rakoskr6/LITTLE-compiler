@@ -88,8 +88,8 @@ class AntlrGlobalListener extends MicroBaseListener {
         allIRLists = numericizeProgram();
         constructCFGList();
 
-        TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
-        tg.CreateTiny();
+        // TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
+        // tg.CreateTiny();
         
         /*
         Registers reg = new Registers();
@@ -145,7 +145,7 @@ class AntlrGlobalListener extends MicroBaseListener {
             cfgList.add(cfg);
         }
         // printCFGList(true);
-        //printSCFGList(true);
+        printSCFGList(true);
     }
 
     public ArrayList<IRNode> createWorklist() {
