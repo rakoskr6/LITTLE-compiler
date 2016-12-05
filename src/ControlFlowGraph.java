@@ -4,13 +4,20 @@ import java.io.*;
 
 class ControlFlowGraph {
     private HashMap<IRNode,ControlFlowNode> graph = new HashMap<IRNode,ControlFlowNode>();
+    private HashMap<IRNode,ControlFlowNode> statementGraph = new HashMap<IRNode,ControlFlowNode>();
     private ArrayList<IRNode> wlist = new ArrayList<IRNode>();
+    private ArrayList<IRNode> slist = new ArrayList<IRNode>();
 
     public ControlFlowGraph(ArrayList<IRNode> worklist, IRList irlist, int endOfFuncNum) {
         this.wlist = new ArrayList<IRNode>(worklist);
         generateNodes(new ArrayList<IRNode>(worklist), irlist, endOfFuncNum);
         constructEdges(worklist);
+        printControlFlowGraph(true);
         convertBlockCFGtoStatementCFG(worklist);
+    }
+
+    public void setGraph(HashMap<IRNode,ControlFlowNode> newgraph) {
+        this.graph = newgraph;
     }
 
     private void generateNodes(ArrayList<IRNode> worklist, IRList irlist, int endOfFuncNum) {
@@ -80,15 +87,102 @@ class ControlFlowGraph {
     private void convertBlockCFGtoStatementCFG(ArrayList<IRNode> worklist) {
         for(int i = 0; i < worklist.size(); ++i) {
             IRNode leaderNode = worklist.get(i);
-            ControlFlowNode cfn = graph.get(leaderNode);
+            ControlFlowNode cfn = new ControlFlowNode(graph.get(leaderNode));
+
+            for(int j = 0; j < cfn.getStatementList().size(); ++j) {
+                IRNode statement = cfn.getStatement(j);
+                ControlFlowNode statementNode = new ControlFlowNode(statement);
+                if(j == 0) { // first entry in block
+                    // statementNode.setPredecessorList(cfn.getPredecessorList());
+                    for(ControlFlowNode predecessor : cfn.getPredecessorList()) {
+                        IRNode predecessorLast = predecessor.getLastStatement();
+                        if(!predecessorLast.getOpcode().matches("RET")) {
+                            // statementNode.appendPredecessor(graph.get(predecessorLast));
+                            if(statementGraph.get(predecessorLast) == null) {
+                                statementNode.appendPredecessor(graph.get(predecessorLast));
+                            }
+                            else {
+                                statementNode.appendPredecessor(statementGraph.get(predecessorLast));
+                            }
+                        }
+                    }
+                } 
+                else if(!(j == 0) && j == cfn.getStatementList().size()-1) { // last entry in block
+                    IRNode pred = cfn.getStatementList().get(j-1);
+                    if(!pred.getOpcode().matches("RET")) {
+                        statementNode.appendPredecessor(statementGraph.get(pred));
+                        // statementNode.appendPredecessor(statementGraph.get(cfn.getStatementList().get(j-1)));
+                    }
+                } 
+                else { // all middle entries
+                    IRNode pred = cfn.getStatementList().get(j-1);
+                    if(!pred.getOpcode().matches("RET")) {
+                        statementNode.appendPredecessor(statementGraph.get(cfn.getStatementList().get(j-1)));
+                    }
+                }
+                statementGraph.put(statement, statementNode);
+            }
+        }
+        for(int i = 0; i < worklist.size(); ++i) {
+            IRNode leaderNode = worklist.get(i);
+            ControlFlowNode cfn = new ControlFlowNode(graph.get(leaderNode));
+
+            for(int j = 0; j < cfn.getStatementList().size(); ++j) {
+                IRNode statement = cfn.getStatement(j);
+                ControlFlowNode statementNode = statementGraph.get(statement);
+                if(!statement.getOpcode().matches("RET")) {
+                    if(j == cfn.getStatementList().size()-1) {
+                        for(ControlFlowNode successor : cfn.getSuccessorList()) {
+                            IRNode successorLeader = successor.getLeaderStatement();
+                            statementNode.appendSuccessor(statementGraph.get(successorLeader));
+                        }
+                    }
+                    else {
+                        IRNode succ = cfn.getStatementList().get(j+1);
+                        statementNode.appendSuccessor(statementGraph.get(succ));
+                    }
+                    statementGraph.put(statement, statementNode);
+                }
+            }
         }
     }
 
     public void printControlFlowGraph(boolean printEdges) {
         System.out.println("Printing control flow graph: --------------------------------------------------------");
-        for(int i = 0; i < wlist.size(); ++i) {
-            IRNode leaderNode = wlist.get(i);
-            ControlFlowNode cfn = graph.get(leaderNode);
+        ArrayList<IRNode> printarray = new ArrayList<IRNode>();
+        for(Map.Entry<IRNode,ControlFlowNode> entry : graph.entrySet()) {
+            IRNode inode = entry.getKey();
+            printarray.add(inode);
+        }
+        Collections.sort(printarray, new Comparator<IRNode>() {
+            @Override
+            public int compare(IRNode inode1, IRNode inode2) {
+                return inode1.getStatementNum() - inode2.getStatementNum();
+            }
+        });
+        for(IRNode inode : printarray) {
+            ControlFlowNode cfn = graph.get(inode);
+            cfn.printControlFlowNode(printEdges);
+        }
+        System.out.println();
+        System.out.println();
+    }
+
+    public void printStatementControlFlowGraph(boolean printEdges) {
+        System.out.println("Printing statement level control flow graph: --------------------------------------------------------");
+        ArrayList<IRNode> printarray = new ArrayList<IRNode>();
+        for(Map.Entry<IRNode,ControlFlowNode> entry : statementGraph.entrySet()) {
+            IRNode inode = entry.getKey();
+            printarray.add(inode);
+        }
+        Collections.sort(printarray, new Comparator<IRNode>() {
+            @Override
+            public int compare(IRNode inode1, IRNode inode2) {
+                return inode1.getStatementNum() - inode2.getStatementNum();
+            }
+        });
+        for(IRNode inode : printarray) {
+            ControlFlowNode cfn = statementGraph.get(inode);
             cfn.printControlFlowNode(printEdges);
         }
         System.out.println();
