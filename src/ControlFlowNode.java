@@ -17,6 +17,10 @@ class ControlFlowNode {
         this.statementList = cfn.statementList;
         this.successorList = cfn.successorList;
         this.predecessorList = cfn.predecessorList;
+        this.genSet = cfn.genSet;
+        this.killSet = cfn.killSet;
+        this.inSet = cfn.inSet;
+        this.outSet = cfn.outSet;
     }
     public ControlFlowNode(IRNode leader) {
         this.statementList.add(leader);
