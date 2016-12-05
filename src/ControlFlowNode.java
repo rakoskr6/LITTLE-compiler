@@ -10,6 +10,9 @@ class ControlFlowNode {
     private HashSet<String> genSet = new HashSet<String>();
     private HashSet<String> killSet = new HashSet<String>();
 
+    private HashSet<String> inSet = new HashSet<String>();
+    private HashSet<String> outSet = new HashSet<String>();
+
     public ControlFlowNode(ControlFlowNode cfn) {
         this.statementList = cfn.statementList;
         this.successorList = cfn.successorList;
@@ -33,6 +36,12 @@ class ControlFlowNode {
     }
     public void appendToGenSet(String reg) {
         this.genSet.add(reg);
+    }
+    public void appendToInSet(String reg) {
+        this.inSet.add(reg);
+    }
+    public void appendToOutSet(String reg) {
+        this.outSet.add(reg);
     }
 
     public ArrayList<IRNode> getStatementList() {
@@ -59,6 +68,12 @@ class ControlFlowNode {
     public HashSet<String> getGenSet() {
         return this.genSet;
     }
+    public HashSet<String> getInSet() {
+        return this.inSet;
+    }
+    public HashSet<String> getOutSet() {
+        return this.outSet;
+    }
 
     public void setStatementList(ArrayList<IRNode> slist) {
         this.statementList = slist;
@@ -75,6 +90,12 @@ class ControlFlowNode {
     public void setGenSet(HashSet<String> newGen) {
         this.genSet = newGen;
     }
+    public void setInSet(HashSet<String> newIn) {
+        this.inSet = newIn;
+    }
+    public void setOutSet(HashSet<String> newOut) {
+        this.outSet = newOut;
+    }
 
     public void clearSuccessorList() {
         this.successorList.clear();
@@ -84,6 +105,12 @@ class ControlFlowNode {
     }
     public void clearGenSet() {
         this.genSet.clear();
+    }
+    public void clearInSet() {
+        this.inSet.clear();
+    }
+    public void clearOutSet() {
+        this.outSet.clear();
     }
 
     public void printControlFlowNode(boolean printEdges) {
@@ -101,6 +128,14 @@ class ControlFlowNode {
             for(ControlFlowNode cfn : predecessorList) {
                 cfn.printStatementList();
             }
+            System.out.println("Printing gen set:");
+            System.out.println(genSet);
+            System.out.println("Printing kill set:");
+            System.out.println(killSet);
+            System.out.println("Printing in set:");
+            System.out.println(inSet);
+            System.out.println("Printing out set:");
+            System.out.println(outSet);
         }
         System.out.println();
     }
