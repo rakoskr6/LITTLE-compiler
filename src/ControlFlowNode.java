@@ -7,6 +7,9 @@ class ControlFlowNode {
     private ArrayList<ControlFlowNode> successorList = new ArrayList<ControlFlowNode>();
     private ArrayList<ControlFlowNode> predecessorList = new ArrayList<ControlFlowNode>();
 
+    private HashSet<String> genSet = new HashSet<String>();
+    private HashSet<String> killSet = new HashSet<String>();
+
     public ControlFlowNode(ControlFlowNode cfn) {
         this.statementList = cfn.statementList;
         this.successorList = cfn.successorList;
@@ -24,6 +27,12 @@ class ControlFlowNode {
     }
     public void appendPredecessor(ControlFlowNode cfn) {
         this.predecessorList.add(cfn);
+    }
+    public void appendToKillSet(String reg) {
+        this.killSet.add(reg);
+    }
+    public void appendToGenSet(String reg) {
+        this.genSet.add(reg);
     }
 
     public ArrayList<IRNode> getStatementList() {
@@ -44,6 +53,12 @@ class ControlFlowNode {
     public ArrayList<ControlFlowNode> getPredecessorList() {
         return this.predecessorList;
     }
+    public HashSet<String> getKillSet() {
+        return this.killSet;
+    }
+    public HashSet<String> getGenSet() {
+        return this.genSet;
+    }
 
     public void setStatementList(ArrayList<IRNode> slist) {
         this.statementList = slist;
@@ -54,9 +69,21 @@ class ControlFlowNode {
     public void setPredecessorList(ArrayList<ControlFlowNode> predlist) {
         this.predecessorList = predlist;
     }
+    public void setKillSet(HashSet<String> newKill) {
+        this.killSet = newKill;
+    }
+    public void setGenSet(HashSet<String> newGen) {
+        this.genSet = newGen;
+    }
 
     public void clearSuccessorList() {
         this.successorList.clear();
+    }
+    public void clearKillSet() {
+        this.killSet.clear();
+    }
+    public void clearGenSet() {
+        this.genSet.clear();
     }
 
     public void printControlFlowNode(boolean printEdges) {
