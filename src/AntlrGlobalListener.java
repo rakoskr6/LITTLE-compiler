@@ -1646,7 +1646,8 @@ class AntlrGlobalListener extends MicroBaseListener {
             ControlFlowGraph cfg = new ControlFlowGraph(worklist, ilist, inode.getStatementNum());
             cfgList.add(cfg);
         }
-        printCFGList(true);
+        // printCFGList(true);
+        printSCFGList(true);
     }
 
     public ArrayList<IRNode> createWorklist() {
@@ -1715,6 +1716,11 @@ class AntlrGlobalListener extends MicroBaseListener {
     private void printCFGList(boolean printEdges) {
         for(ControlFlowGraph cfg : cfgList)
             cfg.printControlFlowGraph(printEdges);
+    }
+
+    private void printSCFGList(boolean printEdges) {
+        for(ControlFlowGraph cfg : cfgList)
+            cfg.printStatementControlFlowGraph(printEdges);
     }
 
     @Override 
