@@ -279,6 +279,7 @@ public class TinyGen {
 
 
         }
+        reg.spillAll();
 
     }
 }

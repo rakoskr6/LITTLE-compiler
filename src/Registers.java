@@ -44,7 +44,17 @@ public class Registers {
     	if(this.spilled.contains(regName)) { // if variable was spilled, reload into register
     		spill(regName,usedReg1,usedReg2);
             this.spilled.remove(regName);
-            setRegister(this.registers.indexOf(""),regName,0);
+
+            int i = this.registers.indexOf("");
+
+            if (regName.startsWith("$T")) {
+                System.out.println("move $-" + regName.replaceAll("\\D+","") + " r" + i);
+            }
+            else {
+                System.out.println("move " + regName + " r" + i);
+            }
+
+            setRegister(i,regName,0);
     	}
     	else if(!this.registers.contains(regName)) { // if not spilled and not in register, load into register
 	    		spill(regName,usedReg1,usedReg2);
@@ -72,8 +82,16 @@ public class Registers {
             for (int i=0; i < maxRegs; i++) { // find register to spill that is not already used
                 String curReg = this.registers.get(i);
                 if ((curReg != usedReg1) && (curReg != usedReg2)) {
-                    System.out.println(";Spilled " + curReg);
+                    System.out.println(";SPILLED " + curReg);
                     this.spilled.add(curReg);
+
+                    if (curReg.startsWith("$T")) {
+                        System.out.println("move r" + i + " $-" + curReg.replaceAll("\\D+",""));
+                    }
+                    else {
+                        System.out.println("move r" + i + " " + curReg);
+                    }
+                    
                     this.dirty.set(i,0);
                     setRegister(i,"",0);
                     return;
@@ -93,6 +111,21 @@ public class Registers {
             setRegister(opd1Num, resOrg, this.dirty.get(resNum));
             this.debug = true;
             setRegister(resNum, "", 0);
+        }
+    }
+
+    public void spillAll() {
+        System.out.println(";Spill All"); 
+        for (int i = 0; i < maxRegs; i++) {
+            if (this.registers.get(i) != "") {
+                if (this.registers.get(i).startsWith("$T")) {
+                    System.out.println("move r" + i + " $-" + this.registers.get(i).replaceAll("\\D+",""));
+                }
+                else {
+                    System.out.println("move r" + i + " " + this.registers.get(i));
+                }
+                setRegister(i,"",0);
+            }
         }
     }
 
