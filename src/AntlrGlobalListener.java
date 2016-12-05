@@ -90,7 +90,7 @@ class AntlrGlobalListener extends MicroBaseListener {
         constructCFGList();
 
 
-        TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
+        TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable,this);
         tg.CreateTiny();
 
 

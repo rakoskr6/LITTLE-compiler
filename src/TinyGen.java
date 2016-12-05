@@ -7,12 +7,12 @@ import java.io.*;
 public class TinyGen {
     private List < IRList > allIRLists = new ArrayList < IRList > ();
     private Hashtable < String, String > regTypeTable = new Hashtable < String, String > ();
+    private AntlrGlobalListener agl;
 
-
-    public TinyGen(List < IRList > allIRLists, Hashtable < String, String > regTypeTable) {
+    public TinyGen(List < IRList > allIRLists, Hashtable < String, String > regTypeTable, AntlrGlobalListener agl) {
         this.allIRLists = allIRLists;
         this.regTypeTable = regTypeTable;
-
+        this.agl = agl;
 
     }
 
@@ -274,7 +274,18 @@ public class TinyGen {
                     System.out.println("Unsupported operation: " + op);
                 }
                 
-                // ???.getOutSetFromIRNode(inode);
+                
+
+
+                System.out.print(";Out set: ");
+                for (String s : agl.getOutSetFromGraphs(inode)) {
+                    System.out.print(s + ", ");
+                }
+                System.out.println();
+
+                reg.updateLive(agl.getOutSetFromGraphs(inode));
+
+                
             }
 
 

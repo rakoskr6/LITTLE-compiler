@@ -10,11 +10,14 @@ public class Registers {
 	private List <String> spilled;
 	private boolean debug = true;
     private int maxRegs = 4;
+    private AntlrGlobalListener agl;
+
 
     public Registers() {
         dirty = new ArrayList<Integer>(Arrays.asList(0,0,0,0));
         registers = new ArrayList<String>(Arrays.asList("","","",""));
         spilled = new ArrayList<String>();
+        this.agl = agl;
 
         if (debug) {
        	 	System.out.println(";---Initilization---");
@@ -127,6 +130,32 @@ public class Registers {
                 setRegister(i,"",0);
             }
         }
+    }
+
+
+    public void updateLive(HashSet<String> liveSet) {
+        int alive = 0;
+        for (int i=0; i < maxRegs; i++) { // for all registers
+            alive = 0;
+            for (String s : liveSet) { // compare to all in liveliness set
+                if (s.compareTo(this.registers.get(i)) == 0) { // if in livliness set
+                    alive = 1;
+                }
+            }
+            if (alive == 0) { // if dead, save and remove from registers
+                if (this.registers.get(i) != "") { // if register is not empty
+                    System.out.println(";-- Updating livliness --");
+                    if (this.registers.get(i).startsWith("$T")) {
+                        System.out.println("move r" + i + " $-" + this.registers.get(i).replaceAll("\\D+",""));
+                    }
+                    else {
+                        System.out.println("move r" + i + " " + this.registers.get(i));
+                    }
+                    setRegister(i,"",0);
+                }
+            }
+        }
+
     }
 
 
