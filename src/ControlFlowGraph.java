@@ -11,7 +11,7 @@ class ControlFlowGraph {
         this.wlist = new ArrayList<IRNode>(worklist);
         generateNodes(new ArrayList<IRNode>(worklist), irlist, endOfFuncNum);
         constructEdges(worklist);
-        printControlFlowGraph(true);
+        // printControlFlowGraph(true);
         convertBlockCFGtoStatementCFG(worklist);
         generateInAndOut();
     }
@@ -40,6 +40,22 @@ class ControlFlowGraph {
         }
         return null;
     }
+    public HashSet<String> getInSetFromIRNode(IRNode inode) {
+        if(statementGraph.containsKey(inode)){
+            return statementGraph.get(inode).getInSet();
+        }
+        else {
+            return null;
+        }
+    }
+    public HashSet<String> getOutSetFromIRNode(IRNode inode) {
+        if(statementGraph.containsKey(inode)) {
+            return statementGraph.get(inode).getOutSet();
+        }
+        else {
+            return null;
+        }
+    }
 
     public void setGraph(HashMap<IRNode,ControlFlowNode> newgraph) {
         this.graph = newgraph;
@@ -47,6 +63,7 @@ class ControlFlowGraph {
 
     private void generateNodes(ArrayList<IRNode> worklist, IRList irlist, int endOfFuncNum) {
         while(worklist.size() > 1) {
+            System.out.println();
             IRNode leaderNode = worklist.remove(0);
             IRNode nextLeader = worklist.get(0);
             ControlFlowNode cfnode = new ControlFlowNode(leaderNode);
@@ -57,7 +74,7 @@ class ControlFlowGraph {
         for(IRNode leaderNode : worklist) { // who the fuck knows why worklist.remove(0) throws an exception
             ControlFlowNode cfnode = new ControlFlowNode(leaderNode);
             ArrayList<IRNode> statementList = new ArrayList<IRNode>();
-            for(int i = leaderNode.getStatementNum(); i < endOfFuncNum; ++i) {
+            for(int i = leaderNode.getStatementNum(); i <= endOfFuncNum; ++i) {
                 statementList.add(irlist.getNode(i - 1));
             }
             cfnode.setStatementList(statementList);
@@ -151,6 +168,7 @@ class ControlFlowGraph {
                 statementGraph.put(statement, statementNode);
             }
         }
+        // successor list generation
         for(int i = 0; i < worklist.size(); ++i) {
             IRNode leaderNode = worklist.get(i);
             ControlFlowNode cfn = new ControlFlowNode(graph.get(leaderNode));
@@ -206,6 +224,13 @@ class ControlFlowGraph {
             // function calls. In particular, we GEN any variables that may be used, and 
             // KILL any variables that must be used. The GEN set for any CALL instruction 
             // therefore contains all global variables, while the KILL set is empty.
+            for(int i = AntlrGlobalListener.allSymbolTables.size()-1; i >= 0; --i) {
+                SymbolTable currTable = AntlrGlobalListener.allSymbolTables.get(i);
+                ArrayList<String> globList = currTable.getGlobals();
+                for(String glob : globList) {
+                    genSet.add(glob);
+                }
+            }
         }
         else if(opcode.matches("(LE|GE|LT|GT|EQ|NE)")) {
             if(!operand1.equals("") && !operand1.matches("\\d+"))
@@ -213,15 +238,15 @@ class ControlFlowGraph {
             if(!operand2.equals("") && !operand2.matches("\\d+"))
                 genSet.add(operand2);
         }
-        else if(opcode.equals("LABEL") || opcode.equals("LINK") || opcode.equals("JUMP")){
+        else if(opcode.equals("LABEL") || opcode.equals("LINK") || opcode.equals("JUMP") || opcode.equals("RET")){
 
         }
         else {
             if(!result.equals(""))
                 killSet.add(result);
-            if(!operand1.equals("") && !operand1.matches("\\d+"))
+            if(!operand1.equals("") && !operand1.matches("^\\d+"))
                 genSet.add(operand1);
-            if(!operand2.equals("") && !operand2.matches("\\d+"))
+            if(!operand2.equals("") && !operand2.matches("^\\d+"))
                 genSet.add(operand2);
         } 
         ArrayList<HashSet<String>> returnList = new ArrayList<HashSet<String>>();
@@ -248,14 +273,25 @@ class ControlFlowGraph {
             ControlFlowNode cfn = statementGraph.get(orderedList.get(i));
             HashSet<String> inSet = new HashSet<String>();
             HashSet<String> outSet = new HashSet<String>();
-            for(ControlFlowNode successor : cfn.getSuccessorList()) {
-                outSet.addAll(successor.getInSet());
+            if(!orderedList.get(i).getOpcode().equals("RET")) {
+                for(ControlFlowNode successor : cfn.getSuccessorList()) {
+                    outSet.addAll(successor.getInSet());
+                }
+                HashSet<String> genSet = new HashSet<String>(cfn.getGenSet());
+                HashSet<String> killSet = new HashSet<String>(cfn.getKillSet());
+                inSet.addAll(outSet);
+                inSet.removeAll(killSet);
+                inSet.addAll(genSet);
             }
-            HashSet<String> genSet = new HashSet<String>(cfn.getGenSet());
-            HashSet<String> killSet = new HashSet<String>(cfn.getKillSet());
-            inSet.addAll(outSet);
-            inSet.removeAll(killSet);
-            inSet.addAll(genSet);
+            else {
+                for(int j = AntlrGlobalListener.allSymbolTables.size()-1; j >= 0; --j) {
+                    SymbolTable currTable = AntlrGlobalListener.allSymbolTables.get(j);
+                    ArrayList<String> globList = currTable.getGlobals();
+                    for(String glob : globList) {
+                        outSet.add(glob);
+                    }
+                }
+            }
             cfn.setInSet(inSet);
             cfn.setOutSet(outSet);
         }
