@@ -111,7 +111,7 @@ public class TinyGen {
                             s3 = s3.replace("$P", "");
                             i3 = Integer.parseInt(s3);
                             i3 = -i3 + numParams + 6;
-                            opd2 = "$" + i3;
+                            res = "$" + i3;
                         } else if (s3.startsWith("$L")) {
                             s3 = s3.replace("$L", "");
                             i3 = Integer.parseInt(s3);

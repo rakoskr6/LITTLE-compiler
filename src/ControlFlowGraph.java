@@ -11,7 +11,7 @@ class ControlFlowGraph {
         this.wlist = new ArrayList<IRNode>(worklist);
         generateNodes(new ArrayList<IRNode>(worklist), irlist, endOfFuncNum);
         constructEdges(worklist);
-        printControlFlowGraph(true);
+        //printControlFlowGraph(true);
         convertBlockCFGtoStatementCFG(worklist);
         generateInAndOut();
     }
