@@ -83,23 +83,14 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
 
         System.out.println(";IR code");
-        // printIRLists(false);
+        //printIRLists(false);
 
         allIRLists = numericizeProgram();
         constructCFGList();
 
         TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable);
         tg.CreateTiny();
-        
-        /*
-        Registers reg = new Registers();
-		reg.newRegister("R1", 0);
-		reg.newRegister("R2");
-		reg.newRegister("R3",1);
-		reg.newRegister("R4");
-		reg.newRegister("R5");
-	*/
-
+       
 
 
         System.out.println("end");

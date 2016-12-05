@@ -19,6 +19,8 @@ public class TinyGen {
     public void CreateTiny() {
         System.out.println(";tiny code");
 
+        Registers reg = new Registers();
+
         for (int i = 0; i < AntlrGlobalListener.allSymbolTables.get(0).objectList.size(); ++i) {
             if (AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType == "STRING") {
                 System.out.print("str ");
@@ -35,10 +37,18 @@ public class TinyGen {
         for (IRList ilist: allIRLists) {
 
             for (IRNode inode: ilist.getList()) {
+                System.out.println(";" + inode.getOpcode() + " " + inode.getOperand1() + " " + inode.getOperand2() + " " + inode.getResult());
+
+
                 String op = inode.getOpcode();
                 String opd1 = inode.getOperand1();
                 String opd2 = inode.getOperand2();
                 String res = inode.getResult();
+
+                String opOrg = inode.getOpcode();
+                String opd1Org = inode.getOperand1();
+                String opd2Org = inode.getOperand2();
+                String resOrg = inode.getResult();
 
                 boolean is_float = true;
                 if (regTypeTable.containsKey(opd1)) {
@@ -57,24 +67,29 @@ public class TinyGen {
 
                 if (opd1.matches("^\\$T\\d+$")) {
                     int val = new Scanner(opd1).useDelimiter("\\D+").nextInt();
-                    opd1 = "" + "r" + Integer.toString(val - 1);
-                    // System.out.println(opd1);
+                    opd1 = "" + "r" + reg.getRegister(opd1Org);
+                    //opd1 = "" + "r" + Integer.toString(val - 1);
                 }
                 if (opd2.matches("^\\$T\\d+$")) {
                     int val = new Scanner(opd2).useDelimiter("\\D+").nextInt();
-                    opd2 = "" + "r" + Integer.toString(val - 1);
-                    // System.out.println(opd2);
+                    opd2 = "" + "r" + reg.getRegister(opd2Org);
+                    //opd2 = "" + "r" + Integer.toString(val - 1);
                 }
                 if (res.matches("^\\$T\\d+$")) {
                     int val = new Scanner(res).useDelimiter("\\D+").nextInt();
-                    res = "" + "r" + Integer.toString(val - 1);
-                    // System.out.println(res);
+                    res = "" + "r" + reg.getRegister(res);
+                    //res = "" + "r" + Integer.toString(val - 1);
                 }
+
+
+                //System.out.println(";" + op + " " + opd1 + " " + opd2 + " " + res);
+
 
                 // Redefined opps for easy manipulation
                 String s1 = opd1, s2 = opd2, s3 = res;
                 Integer i1 = 0, i2 = 0, i3 = 0;
                 
+                // maybe have to copy this stuff to registers! :(
                 // Appropriatly manipulates strings for certain opps
                 if (op.equals("STOREI") || op.equals("STOREF") || op.equals("ADDI") || op.equals("ADDF") || op.equals("SUBF") || op.equals("SUBI") || op.equals("MULTI") || op.equals("MULTF") || op.equals("DIVI") || op.equals("DIVF") || op.equals("WRITEI") || op.equals("WRITEF") || op.equals("READI") || op.equals("LE") || op.equals("GE") || op.equals("LT") || op.equals("GT") || op.equals("EQ") || op.equals("NE") || op.equals("WRITES") || op.equals("READF") || op.equals("JSR") || op.equals("POP") || op.equals("PUSH")) {
                     if (s1.startsWith("$P")) {
