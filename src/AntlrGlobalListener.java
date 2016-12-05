@@ -145,7 +145,27 @@ class AntlrGlobalListener extends MicroBaseListener {
             cfgList.add(cfg);
         }
         // printCFGList(true);
-        printSCFGList(true);
+        // printSCFGList(true);
+    }
+
+    public HashSet<String> getOutSetFromGraphs(IRNode inode) {
+        for(ControlFlowGraph cfg : cfgList) {
+            HashSet<String> oset = cfg.getOutSetFromIRNode(inode);
+            if(oset != null) {
+                return oset;
+            }
+        }
+        return null;
+    }
+
+    public HashSet<String> getInSetFromGraphs(IRNode inode) {
+        for(ControlFlowGraph cfg : cfgList) {
+            HashSet<String> iset = cfg.getInSetFromIRNode(inode);
+            if(iset != null) {
+                return iset;
+            }
+        }
+        return null;
     }
 
     public ArrayList<IRNode> createWorklist() {
