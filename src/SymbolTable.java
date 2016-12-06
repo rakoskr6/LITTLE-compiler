@@ -70,4 +70,17 @@ class SymbolTable { // This symbol table contains a list of declarations
     }
 
 
+    public int getNumInScope() {
+        int num = 0;
+        for (int x = 0; x < this.objectList.size(); x++) {
+            if(this.objectList.get(x).scopeReg.startsWith("$")) {
+                num++;
+
+            }
+        }
+
+        return num;
+    }
+
+
 }

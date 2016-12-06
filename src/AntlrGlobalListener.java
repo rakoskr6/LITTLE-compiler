@@ -65,16 +65,17 @@ class AntlrGlobalListener extends MicroBaseListener {
         }
 
         // Symbol table expulsion
-        // for (int i = 0; i < this.allSymbolTables.size(); i++) {
-        //     System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
-        //     for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
-        //         this.allSymbolTables.get(i).objectList.get(x).print();
-        //     }
+        /*
+         for (int i = 0; i < this.allSymbolTables.size(); i++) {
+             System.out.println("Symbol table " + this.allSymbolTables.get(i).scope);
+             for (int x = 0; x < this.allSymbolTables.get(i).objectList.size(); x++) {
+                 this.allSymbolTables.get(i).objectList.get(x).print();
+             }
 
-        //     if (i +1 < this.allSymbolTables.size()) { // remove trailing extra newline
-        //         System.out.println();
-        //     }
-        // }
+             if (i +1 < this.allSymbolTables.size()) { // remove trailing extra newline
+                 System.out.println();
+             }
+         }*/
         if(this.debugST) {
             System.out.println("START ALL SYMBOL TABLE DEBUG INFORMATION");
             for (SymbolTable st : this.allSymbolTables) {
