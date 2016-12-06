@@ -64,7 +64,7 @@ public class IRNode {
 
     @Override
     public int hashCode() {
-        return this.opcode.hashCode() + this.operand1.hashCode() + this.operand2.hashCode() + this.result.hashCode() + this.statementNum;
+        return this.opcode.hashCode() + this.operand1.hashCode() + this.operand2.hashCode() + this.result.hashCode() * this.statementNum;
     }
     @Override
     public boolean equals(Object inode) {
