@@ -42,10 +42,10 @@ public class Registers {
     }
 
 
-    public int getRegister(String regName, String usedReg1, String usedReg2) { // gets register to use
+    public int getRegister(String regName, String usedReg1, String usedReg2, String usedReg3) { // gets register to use
     	    	
     	if(this.spilled.contains(regName)) { // if variable was spilled, reload into register
-    		spill(regName,usedReg1,usedReg2);
+    		spill(regName,usedReg1,usedReg2,usedReg3);
             this.spilled.remove(regName);
 
             int i = this.registers.indexOf("");
@@ -60,7 +60,7 @@ public class Registers {
             setRegister(i,regName,0);
     	}
     	else if(!this.registers.contains(regName)) { // if not spilled and not in register, load into register
-	    		spill(regName,usedReg1,usedReg2);
+	    		spill(regName,usedReg1,usedReg2,usedReg3);
 	    		setRegister(this.registers.indexOf(""),regName,1);
 	    }
 	    // else in register and nothing needed
@@ -68,15 +68,15 @@ public class Registers {
 	    return this.registers.indexOf(regName);
     }
     public int getRegister(String regName, String usedReg1) {  
-        return getRegister(regName, usedReg1, "");
+        return getRegister(regName, usedReg1, "","");
     }
 
     public int getRegister(String regName) {  
-        return getRegister(regName, "", "");
+        return getRegister(regName, "", "","");
     }
 
 
-    public void spill(String regName, String usedReg1, String usedReg2) { 
+    public void spill(String regName, String usedReg1, String usedReg2, String usedReg3) { 
 	    if(this.registers.indexOf("") != -1) { // there is a free register
 	    	return;
 	    }
@@ -84,8 +84,10 @@ public class Registers {
 	    	//System.out.println("No free registers, " + usedReg1 + ", " + usedReg2 + " used");
             for (int i=0; i < maxRegs; i++) { // find register to spill that is not already used
                 String curReg = this.registers.get(i);
-                if ((curReg != usedReg1) && (curReg != usedReg2)) {
-                    System.out.println(";SPILLED " + curReg);
+                if ((!curReg.equals(usedReg1)) && (!curReg.equals(usedReg2)) && (!curReg.equals(usedReg3))) {
+                    System.out.println(";SPILLED in " + regName + " " + curReg);
+                    System.out.println(";Keep safe " + usedReg1 + ", " + usedReg2 + ", " + usedReg3);
+
                     this.spilled.add(curReg);
 
                     if (curReg.startsWith("$T")) {
