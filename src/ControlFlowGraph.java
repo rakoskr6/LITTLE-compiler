@@ -233,9 +233,9 @@ class ControlFlowGraph {
             }
         }
         else if(opcode.matches("(LE|GE|LT|GT|EQ|NE)")) {
-            if(!operand1.equals("") && !operand1.matches("\\d+"))
+            if(!operand1.equals("") && !operand1.matches("^\\d+"))
                 genSet.add(operand1);
-            if(!operand2.equals("") && !operand2.matches("\\d+"))
+            if(!operand2.equals("") && !operand2.matches("^\\d+"))
                 genSet.add(operand2);
         }
         else if(opcode.equals("LABEL") || opcode.equals("LINK") || opcode.equals("JUMP") || opcode.equals("RET")){
@@ -244,9 +244,9 @@ class ControlFlowGraph {
         else {
             if(!result.equals(""))
                 killSet.add(result);
-            if(!operand1.equals("") && !operand1.matches("^\\d+"))
+            if(!operand1.equals("") && !operand1.matches("^\\d+(?:\\.\\d+)?$"))
                 genSet.add(operand1);
-            if(!operand2.equals("") && !operand2.matches("^\\d+"))
+            if(!operand2.equals("") && !operand2.matches("^\\d+(?:\\.\\d+)?$"))
                 genSet.add(operand2);
         } 
         ArrayList<HashSet<String>> returnList = new ArrayList<HashSet<String>>();
