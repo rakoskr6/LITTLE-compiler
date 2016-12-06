@@ -172,6 +172,15 @@ class AntlrGlobalListener extends MicroBaseListener {
         return null;
     }
 
+    public Integer getFuncRegNum(IRNode inode) {
+        ControlFlowNode basicBlockNode = getBasicBlockFromGraphs(inode);
+        if(basicBlockNode != null) {
+            for(IRNode statement : basicBlockNode.getStatementList()) {
+
+            }
+        }
+    }
+
     public ArrayList<IRNode> createWorklist() {
         ArrayList<IRNode> worklist = new ArrayList<IRNode>(leaderSet);
         Collections.sort(worklist, new Comparator<IRNode>() {
