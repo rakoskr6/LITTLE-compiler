@@ -122,6 +122,7 @@ public class Registers {
         System.out.println(";Spill All"); 
         for (int i = 0; i < maxRegs; i++) {
             if (this.registers.get(i) != "") {
+                this.spilled.add(this.registers.get(i));
                 if (this.registers.get(i).startsWith("$T")) {
                     int x = TinyGen.numVarInScope + Integer.parseInt(this.registers.get(i).replaceAll("\\D+",""));
                     System.out.println("move r" + i + " $-" + x);

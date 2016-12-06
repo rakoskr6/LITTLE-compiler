@@ -38,12 +38,19 @@ public class TinyGen {
         String scope = "global";
         SymbolTable currSymTable = AntlrGlobalListener.allSymbolTables.get(0);
         int numParams = 0;
+        ControlFlowNode cfn, lastcfn = null;
+
         for (IRList ilist: allIRLists) {
 
             for (IRNode inode: ilist.getList()) {
                 System.out.println("\n;" + inode.getOpcode() + " " + inode.getOperand1() + " " + inode.getOperand2() + " " + inode.getResult());
-
-
+                cfn = this.agl.getBasicBlockFromGraphs(inode);
+                System.out.println(";Hi");
+                if (cfn != lastcfn) {
+                    System.out.println(";Spill everything!!");
+                    reg.spillAll();
+                }
+                lastcfn = cfn;
                 String op = inode.getOpcode();
                 String opd1 = inode.getOperand1();
                 String opd2 = inode.getOperand2();
