@@ -180,6 +180,7 @@ class AntlrGlobalListener extends MicroBaseListener {
 
             }
         }
+        return null;
     }
 
     public ArrayList<IRNode> createWorklist() {
