@@ -207,6 +207,7 @@ public class TinyGen {
                         scope = res;
                     }
                 } else if (op.equals("JUMP")) {
+                    reg.spillAll();
                     System.out.println("jmp " + res);
                 } else if (op.equals("LE")) {
                     if (is_float) {
