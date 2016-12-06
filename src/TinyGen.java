@@ -181,7 +181,7 @@ public class TinyGen {
                 } else if (op.equals("DIVF")) {
                     System.out.println("move " + opd1 + " " + res);
                     System.out.println("divr " + opd2 + " " + res);
-                    System.out.println("opd1: " + opd1 +", opd2: " + opd2 + ", res: " + res);
+                    System.out.println(";opd1: " + opd1 +", opd2: " + opd2 + ", res: " + res);
                 } else if (op.equals("WRITEI")) {
                     System.out.println("sys writei " + opd1);
                 } else if (op.equals("WRITEF")) {
