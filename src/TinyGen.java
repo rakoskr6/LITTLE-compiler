@@ -22,6 +22,7 @@ public class TinyGen {
 
         Registers reg = new Registers();
 
+        
         for (int i = 0; i < AntlrGlobalListener.allSymbolTables.get(0).objectList.size(); ++i) {
             if (AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varType == "STRING") {
                 System.out.print("str ");
@@ -31,7 +32,7 @@ public class TinyGen {
                 System.out.print("var ");
                 System.out.println(AntlrGlobalListener.allSymbolTables.get(0).objectList.get(i).varName);
             }
-        }
+        } 
         // Print this every time
         System.out.println("push \npush r0 \npush r1 \npush r2 \npush r3 \njsr main\nsys halt");
         String scope = "global";
@@ -246,7 +247,8 @@ public class TinyGen {
 
                     for (SymbolTable sym: AntlrGlobalListener.allSymbolTables) {
                         if (sym.scope == scope) {
-                            numVar = sym.getNumVarsInScope();
+                            //numVar = sym.getNumVarsInScope();
+                            numVar = sym.getNumInScope(); 
                             numVarInScope = sym.getNumVarsInScope();
                             currSymTable = sym;
                             numParams = sym.getNumParamsInScope();
@@ -254,7 +256,7 @@ public class TinyGen {
                         }
                     }
 
-                    System.out.println("link " + numVar);
+                    System.out.println("\nlink " + "100" + "\n");
                 } else if (op.equals("RET")) {
                     System.out.println("unlnk");
                     System.out.println("ret");
