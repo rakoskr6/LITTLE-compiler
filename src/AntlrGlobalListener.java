@@ -163,6 +163,16 @@ class AntlrGlobalListener extends MicroBaseListener {
         return null;
     }
 
+    public ControlFlowNode getBasicBlockFromGraphs(IRNode inode) {
+        for(ControlFlowGraph cfg : cfgList) {
+            ControlFlowNode cfn = cfg.getCFNodeFromIRNode(inode);
+            if(cfn != null) {
+                return cfn;
+            }
+        }
+        return null;
+    }
+
     public ArrayList<IRNode> createWorklist() {
         ArrayList<IRNode> worklist = new ArrayList<IRNode>(leaderSet);
         Collections.sort(worklist, new Comparator<IRNode>() {
