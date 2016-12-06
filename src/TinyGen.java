@@ -45,9 +45,8 @@ public class TinyGen {
             for (IRNode inode: ilist.getList()) {
                 System.out.println("\n;" + inode.getOpcode() + " " + inode.getOperand1() + " " + inode.getOperand2() + " " + inode.getResult());
                 cfn = this.agl.getBasicBlockFromGraphs(inode);
-                System.out.println(";Hi");
+                
                 if (cfn != lastcfn) {
-                    System.out.println(";Spill everything!!");
                     reg.spillAll();
                 }
                 lastcfn = cfn;
