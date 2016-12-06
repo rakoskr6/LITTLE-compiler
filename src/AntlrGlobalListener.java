@@ -91,8 +91,8 @@ class AntlrGlobalListener extends MicroBaseListener {
         constructCFGList();
 
 
-        TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable,this);
-        tg.CreateTiny();
+        // TinyGen tg = new TinyGen(this.allIRLists, this.regTypeTable,this);
+        // tg.CreateTiny();
 
 
         System.out.println("end");
@@ -175,12 +175,20 @@ class AntlrGlobalListener extends MicroBaseListener {
 
     public Integer getFuncRegNum(IRNode inode) {
         ControlFlowNode basicBlockNode = getBasicBlockFromGraphs(inode);
+        int regCnt = 0;
         if(basicBlockNode != null) {
             for(IRNode statement : basicBlockNode.getStatementList()) {
+                String opcode = statement.getOpcode();
+                String operand1 = statement.getOperand1();
+                String operand2 = statement.getOperand2();
+
 
             }
         }
-        return null;
+        else {
+            return 0;
+        }
+        return regCnt;
     }
 
     public ArrayList<IRNode> createWorklist() {
@@ -442,11 +450,17 @@ class AntlrGlobalListener extends MicroBaseListener {
         ArrayList<String> tokenized_list = tokenizeConditional(expr);
         RPNTree.regnum++;
         if(varTypeTable.get(tokenized_list.get(0)).equals("INT")) {
-            ir.appendNode("STOREI", getScopeReg(tokenized_list.get(2)), "", "$T" + Integer.toString(RPNTree.regnum));
+            if(getScopeReg(tokenized_list.get(0)).equals("GLOB"))
+                ir.appendNode("STOREI", tokenized_list.get(2), "", "$T" + Integer.toString(RPNTree.regnum));
+            else
+                ir.appendNode("STOREI", getScopeReg(tokenized_list.get(2)), "", "$T" + Integer.toString(RPNTree.regnum));
             regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "INT");
         }
         else {
-            ir.appendNode("STOREF", getScopeReg(tokenized_list.get(2)), "", "$T" + Integer.toString(RPNTree.regnum));
+            if(getScopeReg(tokenized_list.get(2)).equals("GLOB"))
+                ir.appendNode("STOREF", tokenized_list.get(2), "", "$T" + Integer.toString(RPNTree.regnum));
+            else
+                ir.appendNode("STOREF", getScopeReg(tokenized_list.get(2)), "", "$T" + Integer.toString(RPNTree.regnum));
             regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "FLOAT");
         }
         String logic_op = logicOpTable.get(tokenized_list.get(1));
@@ -480,7 +494,7 @@ class AntlrGlobalListener extends MicroBaseListener {
             else {
                 op_type = "S";
             }
-            if(!scopeReg.equals("")) {
+            if(!scopeReg.equals("") && !scopeReg.equals("GLOB")) {
                 ir.appendNode("READ" + op_type, "", "", scopeReg);
             }
             else {
@@ -591,8 +605,12 @@ class AntlrGlobalListener extends MicroBaseListener {
             }
             RPNTree.regnum++;
             ir.appendNode("POP", "$T" + Integer.toString(RPNTree.regnum), "", "");
-            if(varTypeTable.get(lhs).equals("INT"))
+            if(varTypeTable.get(lhs).equals("INT") && getScopeReg(lhs).equals("GLOB"))
+                ir.appendNode("STOREI", "$T" + Integer.toString(RPNTree.regnum), "", lhs);
+            else if(varTypeTable.get(lhs).equals("INT"))
                 ir.appendNode("STOREI", "$T" + Integer.toString(RPNTree.regnum), "", getScopeReg(lhs));
+            else if(getScopeReg(lhs).equals("GLOB"))
+                ir.appendNode("STOREF", "$T" + Integer.toString(RPNTree.regnum), "", lhs);
             else
                 ir.appendNode("STOREF", "$T" + Integer.toString(RPNTree.regnum), "", getScopeReg(lhs));
 
@@ -638,7 +656,10 @@ class AntlrGlobalListener extends MicroBaseListener {
                         ir.appendNode("STOREF", rhs, "", "$T" + Integer.toString(rpn_tree.regnum));
                     }
                     else { // a := b
-                        ir.appendNode("STOREF", getScopeReg(rhs), "", "$T" + Integer.toString(rpn_tree.regnum));
+                        if(getScopeReg(rhs).equals("GLOB"))
+                            ir.appendNode("STOREF", rhs, "", "$T" + Integer.toString(rpn_tree.regnum));
+                        else
+                            ir.appendNode("STOREF", getScopeReg(rhs), "", "$T" + Integer.toString(rpn_tree.regnum));
                     }
                     regTypeTable.put("$T" + Integer.toString(RPNTree.regnum), "FLOAT");
                 }
@@ -728,7 +749,10 @@ class AntlrGlobalListener extends MicroBaseListener {
                 ir = rpn_tree.rhsIRGenFloat(ir, rpn_tree);
                 if(rpn_tree.getLeftChild() == null && rpn_tree.getRightChild() == null) {
                     rpn_tree.regnum++;
-                    ir.appendNode("STOREF", getScopeReg(return_val), "", "$T" + Integer.toString(rpn_tree.regnum));
+                    if(!return_val.matches("GLOB"))
+                        ir.appendNode("STOREF", getScopeReg(return_val), "", "$T" + Integer.toString(rpn_tree.regnum));
+                    else
+                        ir.appendNode("STOREF", return_val, "", "$T" + Integer.toString(rpn_tree.regnum));
                 }
                 ir.appendNode("STOREF", "$T"+Integer.toString(rpn_tree.regnum), "", "$R");
             }
