@@ -264,7 +264,7 @@ public class TinyGen {
                         }
                     }
 
-                    System.out.println("\nlink " + "100" + "\n");
+                    System.out.println("\nlink " + agl.getFuncRegNum(inode) + "\n");
                 } else if (op.equals("RET")) {
                     System.out.println("unlnk");
                     System.out.println("ret");
