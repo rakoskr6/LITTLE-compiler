@@ -178,17 +178,25 @@ class AntlrGlobalListener extends MicroBaseListener {
         int regCnt = 0;
         if(basicBlockNode != null) {
             for(IRNode statement : basicBlockNode.getStatementList()) {
+                statement.printIRNode();
                 String opcode = statement.getOpcode();
                 String operand1 = statement.getOperand1();
                 String operand2 = statement.getOperand2();
-
-
+                String result = statement.getResult();
+                if(operand1.contains("$L") || operand1.contains("$P") || operand1.contains("$T"))
+                    ++regCnt;
+                if(operand2.contains("$L") || operand2.contains("$P") || operand2.contains("$T"))
+                    ++regCnt;
+                if(result.contains("$L") || result.contains("$P") || result.contains("$T"))
+                    ++regCnt;
+                System.out.println("regCnt: " + regCnt);
             }
         }
         else {
             return 0;
         }
         return regCnt;
+        // return 200;
     }
 
     public ArrayList<IRNode> createWorklist() {
